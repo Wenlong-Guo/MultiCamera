@@ -7,18 +7,26 @@ import android.view.View
 import android.view.animation.RotateAnimation
 import android.widget.Button
 import androidx.compose.animation.core.RepeatMode
+import io.github.guowenlong.camera.mylibrary.MySurfaceView
 import io.github.guowenlong.camera.widget.MultiSurfaceView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val cameraView = findViewById<MultiSurfaceView>(R.id.glcamera)
+//        val cameraView = findViewById<MultiSurfaceView>(R.id.glcamera)
+//        findViewById<Button>(R.id.btn).setOnClickListener {
+//             findViewById<MultiSurfaceView>(R.id.glcamera).switchCamera()
+//            Log.e("activity","width :${cameraView.width}")
+//            Log.e("activity","height :${cameraView.height}")
+//         }
+//        animation(findViewById<Button>(R.id.btn))
+
+        val cameraView = findViewById<MySurfaceView>(R.id.glcamera)
         findViewById<Button>(R.id.btn).setOnClickListener {
-             findViewById<MultiSurfaceView>(R.id.glcamera).switchCamera()
             Log.e("activity","width :${cameraView.width}")
             Log.e("activity","height :${cameraView.height}")
-         }
+        }
         animation(findViewById<Button>(R.id.btn))
     }
 
