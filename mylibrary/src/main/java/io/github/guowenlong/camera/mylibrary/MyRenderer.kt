@@ -43,11 +43,14 @@ class MyRenderer(private val surfaceView: MySurfaceView) : GLSurfaceView.Rendere
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
+        Log.e("guowenlong", "width$width")
+        Log.e("guowenlong", "height$height")
     }
 
     override fun onDrawFrame(p0: GL10?) {
         surfaceTexture?.updateTexImage()
         surfaceTexture?.getTransformMatrix(mtx)
+        MatrixUtils.getShowMatrix(mtx, 1080, 1440, 1080, 2501)
         filter?.onDraw(mtx, textureId)
     }
 
@@ -61,5 +64,7 @@ class MyRenderer(private val surfaceView: MySurfaceView) : GLSurfaceView.Rendere
 
     override fun onUpdated(output: Preview.PreviewOutput?) {
         surfaceTexture = output?.surfaceTexture ?: return
+        Log.e("guowenlong", "width${output.textureSize.width}")
+        Log.e("guowenlong", "height${output.textureSize.height}")
     }
 }

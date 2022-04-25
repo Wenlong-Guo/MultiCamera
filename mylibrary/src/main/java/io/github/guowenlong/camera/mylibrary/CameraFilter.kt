@@ -43,8 +43,8 @@ class CameraFilter(context: Context) {
 
         vPosition = GLES20.glGetAttribLocation(mProgramHandle, "vPosition")
         vCoord = GLES20.glGetAttribLocation(mProgramHandle, "vCoord")
-        vTexture = GLES20.glGetAttribLocation(mProgramHandle, "vTexture")
-        vMatrix = GLES20.glGetAttribLocation(mProgramHandle, "vMatrix")
+        vTexture = GLES20.glGetUniformLocation(mProgramHandle, "vTexture")
+        vMatrix = GLES20.glGetUniformLocation(mProgramHandle, "vMatrix")
 
         vertexBuffer = ByteBuffer.allocateDirect(VERTEX.size * 4)
             .order(ByteOrder.nativeOrder())
