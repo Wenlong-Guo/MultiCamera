@@ -6,20 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<!--    <io.github.guowenlong.camera.widget.MultiSurfaceView-->
-<!--        android:id="@+id/glcamera"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginLeft="20dp"-->
-<!--        android:layout_marginRight="20dp"-->
-<!--        android:visibility="gone"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-    <io.github.guowenlong.camera.mylibrary.MySurfaceView
+    <io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
         android:id="@+id/glcamera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
