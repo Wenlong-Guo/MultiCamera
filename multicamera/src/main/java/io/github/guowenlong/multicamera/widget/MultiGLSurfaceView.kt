@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.SurfaceHolder
+import java.util.concurrent.Executors
 
 /**
  * Description: MultiCamera 的 GLSurfaceView
@@ -13,6 +14,8 @@ import android.view.SurfaceHolder
  */
 class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     GLSurfaceView(context, attrs) {
+
+    private val executor by lazy { Executors.newSingleThreadExecutor() }
 
     private val renderer: MultiRenderer
 
@@ -32,6 +35,6 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     }
 
     fun switchCamera(cameraId: Int? = null) {
-        renderer.switchCamera(cameraId)
+        executor.execute { renderer.switchCamera(cameraId) }
     }
 }
