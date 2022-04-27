@@ -74,7 +74,8 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
         openCamera(cameraId)
     }
 
-    fun startPreview(surfaceTextTure: SurfaceTexture) {
+    fun startPreview(surfaceTextTure: SurfaceTexture?) {
+        if (surfaceTextTure == null) return
         try {
             camera?.setPreviewTexture(surfaceTextTure)
             camera?.startPreview()

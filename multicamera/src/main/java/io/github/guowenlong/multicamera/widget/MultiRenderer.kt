@@ -60,7 +60,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         cameraSize.cover(width, height)
         cameraPresenter.openCamera(cameraConfig.cameraId)
         filter?.turnCameraId(cameraConfig.cameraId)
-        surfaceTexture?.let { cameraPresenter.startPreview(it) }
+        cameraPresenter.startPreview(surfaceTexture)
         viewSize = cameraPresenter.cameraSize
         GLES20.glViewport(0, 0, width, height)
     }
@@ -104,9 +104,17 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             isEnableDraw = false
             cameraPresenter.switchCamera(cameraConfig.cameraId)
             viewSize = cameraPresenter.cameraSize
-            surfaceTexture?.let { cameraPresenter.startPreview(it) }
+            cameraPresenter.startPreview(surfaceTexture)
             filter?.turnCameraId(cameraConfig.cameraId)
         }
+    }
+
+    /**
+     * 强制恢复
+     */
+    fun forceResume(){
+        cameraPresenter.openCamera(cameraConfig.cameraId)
+        cameraPresenter.startPreview(surfaceTexture)
     }
 
     /**

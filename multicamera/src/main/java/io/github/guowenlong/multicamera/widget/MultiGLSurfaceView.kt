@@ -39,6 +39,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         executor.execute { renderer.switchCamera(cameraId) }
     }
 
+    fun forceResume(){
+        executor.execute { renderer.forceResume() }
+    }
+
     fun takePicture(listener: TakePictureListener) {
         renderer.takePicture(listener)
     }
