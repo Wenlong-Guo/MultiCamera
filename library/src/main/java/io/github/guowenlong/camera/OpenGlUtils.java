@@ -56,7 +56,7 @@ public class OpenGlUtils {
 	public static int loadTexture(final Buffer data, final int width,final int height, final int usedTexId) {
 		if(data == null)
 			return NO_TEXTURE;
-	    int textures[] = new int[1];
+	    int[] textures = new int[1];
 	    if (usedTexId == NO_TEXTURE) {
 	        GLES20.glGenTextures(1, textures, 0);
 	        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
@@ -82,7 +82,7 @@ public class OpenGlUtils {
 	public static int loadTexture(final Buffer data, final int width,final int height, final int usedTexId,final int type) {
 		if(data == null)
 			return NO_TEXTURE;
-	    int textures[] = new int[1];
+	    int[] textures = new int[1];
 	    if (usedTexId == NO_TEXTURE) {
 	        GLES20.glGenTextures(1, textures, 0);
 	        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);

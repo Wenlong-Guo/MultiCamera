@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         val cameraView = findViewById<MultiGLSurfaceView>(R.id.glcamera)
         findViewById<Button>(R.id.btn).setOnClickListener {
+            cameraView.switchCamera()
             Log.e("activity","width :${cameraView.width}")
             Log.e("activity","height :${cameraView.height}")
         }

@@ -30,4 +30,8 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         super.surfaceDestroyed(holder)
         renderer.onSurfaceDestroy()
     }
+
+    fun switchCamera(cameraId: Int? = null) {
+        renderer.switchCamera(cameraId)
+    }
 }

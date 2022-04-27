@@ -21,14 +21,20 @@ class CameraFilter(context: Context) : BaseFilter() {
         initBuffer()
     }
 
-    override fun onDraw(mtx: FloatArray, textureId: Int) {
+    override fun onDraw(mtx: FloatArray, textureId: Int, cameraId: Int) {
+        clear()
         vertexBuffer?.position(0)
         GLES20.glVertexAttribPointer(glPosition, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
         GLES20.glEnableVertexAttribArray(glPosition)
-
-        textureBuffer?.position(0)
-        GLES20.glVertexAttribPointer(glCoord, 2, GLES20.GL_FLOAT, false, 0, textureBuffer)
-        GLES20.glEnableVertexAttribArray(glCoord)
+        if (cameraId == 0) {
+            backTextureBuffer?.position(0)
+            GLES20.glVertexAttribPointer(glCoord, 2, GLES20.GL_FLOAT, false, 0, backTextureBuffer)
+            GLES20.glEnableVertexAttribArray(glCoord)
+        }else{
+            frontTextureBuffer?.position(0)
+            GLES20.glVertexAttribPointer(glCoord, 2, GLES20.GL_FLOAT, false, 0, frontTextureBuffer)
+            GLES20.glEnableVertexAttribArray(glCoord)
+        }
 
         bindTexture(textureId)
 

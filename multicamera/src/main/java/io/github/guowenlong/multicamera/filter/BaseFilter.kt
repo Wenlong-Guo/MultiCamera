@@ -25,11 +25,12 @@ abstract class BaseFilter {
     var glCoord = 0
     var glTexture = 0
     var glMatrix = 0
-
+    var cameraId: Int = 0
     var vertexBuffer: FloatBuffer? = null
-    var textureBuffer: FloatBuffer? = null
+    var backTextureBuffer: FloatBuffer? = null
+    var frontTextureBuffer: FloatBuffer? = null
 
-    abstract fun onDraw(mtx: FloatArray, textureId: Int)
+    abstract fun onDraw(mtx: FloatArray, textureId: Int, cameraId: Int)
 
     /**
      * 删除 program
@@ -38,13 +39,18 @@ abstract class BaseFilter {
         glProgram?.let { GLES20.glDeleteProgram(it) }
     }
 
+    open fun turnCameraId(cameraId: Int) {
+        this.cameraId = cameraId
+        initBuffer()
+    }
+
     /**
      * 清除画布
      */
     open fun clear() {
         //黑色
         GLES20.glClearColor(0f, 0f, 0f, 0f)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
     }
 
     open fun createProgram(context: Context, vertexGLSL: String, fragmentGLSL: String) {
@@ -78,21 +84,22 @@ abstract class BaseFilter {
     }
 
     open fun bindTexture(textureId: Int) {
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId)
-        GLES20.glUniform1i(glTexture, 0)
+//        if (textureId != OpenGLUtils.NO_TEXTURE) {
+//            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+//            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId)
+//            GLES20.glUniform1i(glTexture, 0)
+//        }
     }
 
     open fun initBuffer() {
-        vertexBuffer = ByteBuffer.allocateDirect(32)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
+        vertexBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder()).asFloatBuffer()
         vertexBuffer?.clear()
-        vertexBuffer?.put(OpenGLUtils.VERTEX)
-        textureBuffer = ByteBuffer.allocateDirect(32)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-        textureBuffer?.clear()
-        textureBuffer?.put(OpenGLUtils.TEXTURE)
+        vertexBuffer?.put(OpenGLUtils.VERTEX)?.position(0)
+        backTextureBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder()).asFloatBuffer()
+        backTextureBuffer?.clear()
+        backTextureBuffer?.put(OpenGLUtils.TEXTURE_BACK)
+        frontTextureBuffer = ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder()).asFloatBuffer()
+        frontTextureBuffer?.clear()
+        frontTextureBuffer?.put(OpenGLUtils.TEXTURE_FRONT)
     }
 }

@@ -1,7 +1,9 @@
 package io.github.guowenlong.multicamera.utils
 
+import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.util.Log
+import javax.microedition.khronos.opengles.GL10
 
 /**
  * Description: GLES20的工具类
@@ -12,6 +14,7 @@ import android.util.Log
 object OpenGLUtils {
 
     private const val TAG = "OpenGLUtils"
+    const val NO_TEXTURE = -1
 
     /**
      * 顶点坐标
@@ -24,13 +27,23 @@ object OpenGLUtils {
     )
 
     /**
-     * 纹理坐标
+     * 纹理坐标 后置摄像头
      */
-    val TEXTURE = floatArrayOf(
+    val TEXTURE_BACK = floatArrayOf(
         1f, 1f,
         1f, 0f,
         0f, 1f,
         0f, 0f,
+    )
+
+    /**
+     * 纹理坐标 前置摄像头
+     */
+    val TEXTURE_FRONT = floatArrayOf(
+        0f, 1f,
+        0f, 0f,
+        1f, 1f,
+        1f, 0f,
     )
 
     fun createProgram(vertexSource: String, fragmentSource: String): Int {
@@ -73,5 +86,28 @@ object OpenGLUtils {
             }
         }
         return shaderHandle
+    }
+
+    fun createTextureID(): Int {
+        val texture = IntArray(1)
+        GLES20.glGenTextures(1, texture, 0) //第一个参数表示创建几个纹理对象，并将创建好的纹理对象放置到第二个参数中去
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture[0])
+        GLES20.glTexParameterf(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR.toFloat()
+        )
+        GLES20.glTexParameterf(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR.toFloat()
+        )
+        GLES20.glTexParameteri(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE
+        )
+        GLES20.glTexParameteri(
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+            GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE
+        )
+        return texture[0]
     }
 }

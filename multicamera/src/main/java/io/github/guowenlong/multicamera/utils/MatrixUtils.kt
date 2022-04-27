@@ -1,4 +1,4 @@
-package io.github.guowenlong.multicamera
+package io.github.guowenlong.multicamera.utils
 
 import android.opengl.Matrix
 

@@ -19,7 +19,7 @@ object AssetsUtils {
         var content = ""
         try {
             val inputStream = context.resources.assets.open(assetsFilePath)
-            var ch = 0
+            var ch: Int
             val out = ByteArrayOutputStream() // 实现了一个输出流
             while (inputStream.read().also { ch = it } != -1) {
                 out.write(ch) // 将指定的字节写入此 byte 数组输出流

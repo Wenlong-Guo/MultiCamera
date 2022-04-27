@@ -76,7 +76,6 @@ class MultiSurfaceView(context: Context, attrs: AttributeSet? = null) :
 //        mBeautyFilter = new MagicAntiqueFilter();
 //        mSlideFilterGroup = new SlideGpuFilterGroup();
 
-
         viewWidth = width
         viewHeight = height
         cameraPresenter.openCamera(defaultCameraId)

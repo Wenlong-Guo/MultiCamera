@@ -19,4 +19,9 @@ data class MultiSize(
             this.height = width
         }
     }
+
+    override fun toString(): String {
+        return "MultiSize(width=$width, height=$height)"
+    }
+
 }

@@ -1,15 +1,16 @@
 package io.github.guowenlong.multicamera.widget
 
 import android.graphics.SurfaceTexture
+import android.hardware.Camera
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.util.Log
-import androidx.camera.core.Preview
-import androidx.lifecycle.LifecycleOwner
-import io.github.guowenlong.multicamera.MatrixUtils
+import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.filter.CameraFilter
+import io.github.guowenlong.multicamera.utils.MatrixUtils
+import io.github.guowenlong.multicamera.utils.OpenGLUtils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -20,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10
  * Gmail:       guowenlong20000@sina.com
  */
 class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView.Renderer,
-    SurfaceTexture.OnFrameAvailableListener, Preview.OnPreviewOutputUpdateListener {
+    SurfaceTexture.OnFrameAvailableListener {
 
     private var surfaceTexture: SurfaceTexture? = null
 
@@ -30,33 +31,41 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private var filter: CameraFilter? = null
 
-    private var cameraPresenter = CameraPresenter()
+    private var cameraPresenter = CameraPresenter(surfaceView)
 
     private val cameraSize = MultiSize()
 
-    private val viewSize = MultiSize()
+    private var viewSize = MultiSize()
 
-    init {
-        cameraPresenter.init(surfaceView.context as LifecycleOwner, this)
-    }
+    private var cameraConfig = CameraConfig()
+
+    private var isEnableDraw = true
 
     fun onSurfaceDestroy() {
         filter?.release()
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        surfaceTexture?.attachToGLContext(textureId)
+        textureId = OpenGLUtils.createTextureID()
+        surfaceTexture = SurfaceTexture(textureId)
         surfaceTexture?.setOnFrameAvailableListener(this)
         filter = CameraFilter(surfaceView.context)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         cameraSize.cover(width, height)
+        cameraPresenter.openCamera(cameraConfig.cameraId)
+        filter?.turnCameraId(cameraConfig.cameraId)
+        surfaceTexture?.let { cameraPresenter.startPreview(it) }
+        viewSize = cameraPresenter.cameraSize
         GLES20.glViewport(0, 0, width, height)
+        Log.e("guowenlong", "camerasize:$cameraSize")
+        Log.e("guowenlong", "viewSize:$viewSize")
+        Log.e("guowenlong camera", "onSurfaceChanged :${cameraConfig.cameraId}")
     }
 
+
     override fun onDrawFrame(gl: GL10?) {
-        surfaceTexture?.updateTexImage()
         MatrixUtils.getMatrix(
             mtx,
             viewSize.width,
@@ -64,18 +73,36 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             cameraSize.width,
             cameraSize.height
         )
-        filter?.onDraw(mtx, textureId)
+        surfaceTexture?.updateTexImage()
+        /**
+         * 过滤掉颠倒的那帧
+         */
+        if (!isEnableDraw) {
+            isEnableDraw = true
+        } else {
+            filter?.onDraw(mtx, textureId, cameraConfig.cameraId)
+        }
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
         surfaceView.requestRender()
     }
 
-    override fun onUpdated(output: Preview.PreviewOutput?) {
-        surfaceTexture = output?.surfaceTexture ?: return
-        viewSize.cover(output.textureSize.width, output.textureSize.height)
-        Log.d("guowenlong","viewSize.width : ${viewSize.width}")
-        Log.d("guowenlong","viewSize.height : ${viewSize.height}")
+    fun switchCamera(cameraId: Int?) {
+        surfaceTexture?.let {
+            cameraConfig.cameraId =
+                cameraId ?: if (cameraConfig.cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    Camera.CameraInfo.CAMERA_FACING_BACK
+                } else {
+                    Camera.CameraInfo.CAMERA_FACING_FRONT
+                }
+            isEnableDraw = false
+            cameraPresenter.switchCamera(cameraConfig.cameraId)
+            viewSize = cameraPresenter.cameraSize
+            surfaceTexture?.let { cameraPresenter.startPreview(it) }
+            filter?.turnCameraId(cameraConfig.cameraId)
+            Log.e("guowenlong", "camerasize:$cameraSize")
+            Log.e("guowenlong", "viewSize:$viewSize")
+        }
     }
-
 }
