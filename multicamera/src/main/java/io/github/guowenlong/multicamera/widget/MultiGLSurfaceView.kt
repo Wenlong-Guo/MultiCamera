@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.SurfaceHolder
+import io.github.guowenlong.multicamera.camera.TakePictureListener
 import java.util.concurrent.Executors
 
 /**
@@ -36,5 +37,9 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
 
     fun switchCamera(cameraId: Int? = null) {
         executor.execute { renderer.switchCamera(cameraId) }
+    }
+
+    fun takePicture(listener: TakePictureListener) {
+        renderer.takePicture(listener)
     }
 }

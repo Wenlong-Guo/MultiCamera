@@ -1,14 +1,16 @@
 package io.github.guowenlong.multicamera.widget
 
+import android.app.Activity
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.util.Log
 import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
 import io.github.guowenlong.multicamera.camera.CameraPresenter
+import io.github.guowenlong.multicamera.camera.TakePictureListener
 import io.github.guowenlong.multicamera.filter.CameraFilter
+import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
 import javax.microedition.khronos.egl.EGLConfig
@@ -41,6 +43,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private var isEnableDraw = true
 
+    private var takePictureListener: TakePictureListener? = null
+
     fun onSurfaceDestroy() {
         filter?.release()
     }
@@ -59,9 +63,6 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         surfaceTexture?.let { cameraPresenter.startPreview(it) }
         viewSize = cameraPresenter.cameraSize
         GLES20.glViewport(0, 0, width, height)
-        Log.e("guowenlong", "camerasize:$cameraSize")
-        Log.e("guowenlong", "viewSize:$viewSize")
-        Log.e("guowenlong camera", "onSurfaceChanged :${cameraConfig.cameraId}")
     }
 
 
@@ -73,15 +74,19 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             cameraSize.width,
             cameraSize.height
         )
+
         surfaceTexture?.updateTexImage()
+
         /**
          * 过滤掉颠倒的那帧
          */
         if (!isEnableDraw) {
-            isEnableDraw = true
+            surfaceView.postDelayed({ isEnableDraw = true }, 100)
         } else {
             filter?.onDraw(mtx, textureId, cameraConfig.cameraId)
         }
+
+        checkTakePicture(gl)
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
@@ -101,8 +106,27 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             viewSize = cameraPresenter.cameraSize
             surfaceTexture?.let { cameraPresenter.startPreview(it) }
             filter?.turnCameraId(cameraConfig.cameraId)
-            Log.e("guowenlong", "camerasize:$cameraSize")
-            Log.e("guowenlong", "viewSize:$viewSize")
         }
+    }
+
+    /**
+     * 无声拍照
+     */
+    fun takePicture(listener: TakePictureListener) {
+        takePictureListener = listener
+    }
+
+    /**
+     * 监控是否需要拍照
+     */
+    private fun checkTakePicture(gl: GL10?) {
+        if (takePictureListener == null) return
+        GLSurfaceViewUtils.createBitmapFromGLSurface(0, 0, cameraSize.width, cameraSize.height, gl)
+            ?.let {
+                (surfaceView.context as Activity).runOnUiThread {
+                    takePictureListener?.onCollect(it)
+                    takePictureListener = null
+                }
+            }
     }
 }

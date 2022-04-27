@@ -87,14 +87,6 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
         camera?.stopPreview()
     }
 
-    fun takePicture(
-        shutter: Camera.ShutterCallback?,
-        raw: PictureCallback?,
-        jpeg: PictureCallback
-    ) {
-        camera?.takePicture(shutter, raw, jpeg)
-    }
-
     private fun getBestSize(
         sizes: List<Camera.Size>,
         currentWidth: Int,

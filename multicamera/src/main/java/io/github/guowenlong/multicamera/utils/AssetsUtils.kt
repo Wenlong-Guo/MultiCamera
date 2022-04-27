@@ -1,9 +1,13 @@
 package io.github.guowenlong.multicamera.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.opengl.GLException
 import android.util.Log
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
+import javax.microedition.khronos.opengles.GL10
+
 
 /**
  * Description: Assets工具类
