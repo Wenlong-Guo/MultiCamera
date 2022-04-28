@@ -2,6 +2,7 @@ package io.github.guowenlong.camera.sample.fragment
 
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
@@ -15,7 +16,7 @@ class OneFragment : BaseFragment() {
 
     override val layoutId = R.layout.fragment_one
 
-    private lateinit var cameraView :MultiGLSurfaceView
+    private lateinit var cameraView: MultiGLSurfaceView
 
     companion object {
         fun instance(): OneFragment {
@@ -25,12 +26,15 @@ class OneFragment : BaseFragment() {
 
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
+        view.findViewById<Button>(R.id.btn_one).setOnClickListener {
+
+        }
     }
 
     override fun onResume() {
         super.onResume()
         cameraView.forceResume()
-        Log.e("one","onResume")
+        Log.e("one", "onResume")
     }
 
     override fun onPause() {
@@ -40,11 +44,11 @@ class OneFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (hidden){
+        if (hidden) {
             cameraView.forcePause()
-        }else{
+        } else {
             cameraView.forceResume()
         }
-        Log.e("one","onHiddenChanged")
+        Log.e("one", "onHiddenChanged")
     }
 }

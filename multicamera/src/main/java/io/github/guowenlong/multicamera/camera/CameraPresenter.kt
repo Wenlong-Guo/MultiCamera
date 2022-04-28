@@ -1,12 +1,20 @@
 package io.github.guowenlong.multicamera.camera
 
+import android.R
+import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.util.Log
 import android.view.SurfaceView
+import android.view.View
+import android.widget.Toast
 import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
+import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 /**

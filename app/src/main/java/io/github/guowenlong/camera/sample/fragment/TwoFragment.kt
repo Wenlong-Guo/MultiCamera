@@ -46,6 +46,9 @@ class TwoFragment : BaseFragment() {
             })
         }
         animation(view.findViewById<Button>(R.id.btn))
+        view.findViewById<Button>(R.id.btn_two).setOnClickListener {
+
+        }
     }
 
     private fun animation(view: View) {
@@ -61,7 +64,7 @@ class TwoFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         cameraView.forceResume()
-        Log.e("two","onResume")
+        Log.e("two", "onResume")
     }
 
     override fun onPause() {
@@ -71,11 +74,11 @@ class TwoFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (hidden){
+        if (hidden) {
             cameraView.forcePause()
-        }else{
+        } else {
             cameraView.forceResume()
         }
-        Log.e("two","onHiddenChanged")
+        Log.e("two", "onHiddenChanged")
     }
 }
