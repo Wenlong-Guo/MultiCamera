@@ -54,13 +54,14 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         surfaceTexture = SurfaceTexture(textureId)
         surfaceTexture?.setOnFrameAvailableListener(this)
         filter = CameraFilter(surfaceView.context)
+        cameraPresenter.releaseCamera()
+        cameraPresenter.openCamera(cameraConfig.cameraId)
+        cameraPresenter.startPreview(surfaceTexture)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         cameraSize.cover(width, height)
-        cameraPresenter.openCamera(cameraConfig.cameraId)
         filter?.turnCameraId(cameraConfig.cameraId)
-        cameraPresenter.startPreview(surfaceTexture)
         viewSize = cameraPresenter.cameraSize
         GLES20.glViewport(0, 0, width, height)
     }
@@ -109,12 +110,20 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         }
     }
 
+    fun getCameraPresenter() :CameraPresenter {
+        return cameraPresenter
+    }
+
     /**
      * 强制恢复
      */
     fun forceResume(){
-        cameraPresenter.openCamera(cameraConfig.cameraId)
+        cameraPresenter.switchCamera(cameraConfig.cameraId)
         cameraPresenter.startPreview(surfaceTexture)
+    }
+
+    fun forcePause(){
+        cameraPresenter.stopPreview()
     }
 
     /**

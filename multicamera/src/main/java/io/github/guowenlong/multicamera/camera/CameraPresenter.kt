@@ -1,11 +1,8 @@
 package io.github.guowenlong.multicamera.camera
 
-import android.app.Activity
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
-import android.hardware.Camera.PictureCallback
 import android.util.Log
-import android.view.Surface
 import android.view.SurfaceView
 import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
@@ -81,6 +78,19 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
             camera?.startPreview()
         } catch (e: IOException) {
             Log.e(TAG, "startPreview", e)
+        }
+    }
+
+    fun getMaxZoom(): Int? {
+        return camera?.parameters?.maxZoom
+    }
+
+    fun setZoom(zoom: Int) {
+        camera?.parameters?.let { parameters ->
+            parameters.zoom = zoom
+            camera?.parameters = parameters
+        } ?: run {
+            Log.e(TAG, "setZoom parameters is null")
         }
     }
 

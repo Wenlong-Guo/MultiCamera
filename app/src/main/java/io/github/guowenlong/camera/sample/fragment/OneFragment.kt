@@ -1,5 +1,6 @@
 package io.github.guowenlong.camera.sample.fragment
 
+import android.util.Log
 import android.view.View
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
@@ -26,7 +27,24 @@ class OneFragment : BaseFragment() {
         cameraView = view.findViewById(R.id.glcamera)
     }
 
-    fun open(){
+    override fun onResume() {
+        super.onResume()
         cameraView.forceResume()
+        Log.e("one","onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraView.forcePause()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden){
+            cameraView.forcePause()
+        }else{
+            cameraView.forceResume()
+        }
+        Log.e("one","onHiddenChanged")
     }
 }

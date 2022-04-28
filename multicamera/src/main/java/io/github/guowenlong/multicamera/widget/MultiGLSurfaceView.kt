@@ -3,8 +3,13 @@ package io.github.guowenlong.multicamera.widget
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
+import android.view.View
+import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
+import io.github.guowenlong.multicamera.utils.SingleThreadUtils
 import java.util.concurrent.Executors
 
 /**
@@ -16,9 +21,9 @@ import java.util.concurrent.Executors
 class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     GLSurfaceView(context, attrs) {
 
-    private val executor by lazy { Executors.newSingleThreadExecutor() }
-
     private val renderer: MultiRenderer
+
+    private val scaleGestureDetector: ScaleGestureDetector
 
     init {
         /*设置版本*/
@@ -28,6 +33,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         setRenderer(renderer)
         /*主动调用渲染*/
         renderMode = RENDERMODE_WHEN_DIRTY
+        MultiOnScaleGestureListener(getCameraPresenter()).let {
+            scaleGestureDetector = ScaleGestureDetector(context, it)
+            it.detector = scaleGestureDetector
+        }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -35,15 +44,29 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         renderer.onSurfaceDestroy()
     }
 
-    fun switchCamera(cameraId: Int? = null) {
-        executor.execute { renderer.switchCamera(cameraId) }
+    fun getCameraPresenter(): CameraPresenter {
+        return renderer.getCameraPresenter()
     }
 
-    fun forceResume(){
-        executor.execute { renderer.forceResume() }
+    fun switchCamera(cameraId: Int? = null) {
+        SingleThreadUtils.execute { renderer.switchCamera(cameraId) }
+    }
+
+    fun forceResume() {
+        visibility = View.VISIBLE
+        SingleThreadUtils.execute { renderer.forceResume() }
+    }
+
+    fun forcePause(){
+        visibility = View.INVISIBLE
+        SingleThreadUtils.execute { renderer.forcePause() }
     }
 
     fun takePicture(listener: TakePictureListener) {
         renderer.takePicture(listener)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return scaleGestureDetector.onTouchEvent(event)
     }
 }
