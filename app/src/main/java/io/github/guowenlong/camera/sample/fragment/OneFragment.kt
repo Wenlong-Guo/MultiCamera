@@ -17,6 +17,7 @@ class OneFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_one
 
     private lateinit var cameraView: MultiGLSurfaceView
+    private var isShow = false
 
     companion object {
         fun instance(): OneFragment {
@@ -33,7 +34,7 @@ class OneFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        cameraView.forceResume()
+        if (isShow) cameraView.forceResume()
         Log.e("one", "onResume")
     }
 
@@ -44,6 +45,7 @@ class OneFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        isShow = !hidden
         if (hidden) {
             cameraView.forcePause()
         } else {

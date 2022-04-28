@@ -29,7 +29,7 @@ class TwoFragment : BaseFragment() {
 
     private lateinit var cameraView: MultiGLSurfaceView
     private lateinit var picture: ImageView
-
+    private var isShow = false
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
 
@@ -63,7 +63,7 @@ class TwoFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        cameraView.forceResume()
+        if (isShow)cameraView.forceResume()
         Log.e("two", "onResume")
     }
 
@@ -74,6 +74,7 @@ class TwoFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        isShow = !hidden
         if (hidden) {
             cameraView.forcePause()
         } else {
