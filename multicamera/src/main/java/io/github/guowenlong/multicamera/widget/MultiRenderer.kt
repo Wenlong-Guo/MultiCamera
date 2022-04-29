@@ -9,7 +9,9 @@ import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
-import io.github.guowenlong.multicamera.filter.CameraFilter
+import io.github.guowenlong.multicamera.filter.BaseFilter
+import io.github.guowenlong.multicamera.filter.CoolMagicFilter
+import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
@@ -31,7 +33,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private val mtx = FloatArray(16)
 
-    private var filter: CameraFilter? = null
+    private var filter: BaseFilter? = null
 
     private var cameraPresenter = CameraPresenter(surfaceView)
 
@@ -53,10 +55,10 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         textureId = OpenGLUtils.createTextureID()
         surfaceTexture = SurfaceTexture(textureId)
         surfaceTexture?.setOnFrameAvailableListener(this)
-        filter = CameraFilter(surfaceView.context)
         cameraPresenter.releaseCamera()
         cameraPresenter.openCamera(cameraConfig.cameraId)
         cameraPresenter.startPreview(surfaceTexture)
+        filter = CoolMagicFilter(surfaceView.context)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -110,19 +112,19 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         }
     }
 
-    fun getCameraPresenter() :CameraPresenter {
+    fun getCameraPresenter(): CameraPresenter {
         return cameraPresenter
     }
 
     /**
      * 强制恢复
      */
-    fun forceResume(){
+    fun forceResume() {
         cameraPresenter.switchCamera(cameraConfig.cameraId)
         cameraPresenter.startPreview(surfaceTexture)
     }
 
-    fun forcePause(){
+    fun forcePause() {
         cameraPresenter.stopPreview()
     }
 
@@ -145,5 +147,9 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
                     takePictureListener = null
                 }
             }
+    }
+
+    fun showMagicFilter(magicFilter: BaseFilter) {
+        filter = magicFilter
     }
 }

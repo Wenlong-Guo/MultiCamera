@@ -9,8 +9,8 @@ import android.view.SurfaceHolder
 import android.view.View
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
+import io.github.guowenlong.multicamera.filter.BaseFilter
 import io.github.guowenlong.multicamera.utils.SingleThreadUtils
-import java.util.concurrent.Executors
 
 /**
  * Description: MultiCamera 的 GLSurfaceView
@@ -60,6 +60,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     fun forcePause(){
         visibility = View.INVISIBLE
         SingleThreadUtils.execute { renderer.forcePause() }
+    }
+
+    fun showMagicFilter(magicFilter: BaseFilter){
+        renderer.showMagicFilter(magicFilter)
     }
 
     fun takePicture(listener: TakePictureListener) {
