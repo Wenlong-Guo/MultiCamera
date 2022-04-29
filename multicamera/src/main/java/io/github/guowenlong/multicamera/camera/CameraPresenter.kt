@@ -69,6 +69,7 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
     }
 
     fun releaseCamera() {
+        Log.e("guowenlong","releaseCamera")
         camera?.stopPreview()
         camera?.release()
         camera = null
@@ -80,6 +81,7 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
     }
 
     fun startPreview(surfaceTextTure: SurfaceTexture?) {
+        Log.e("guowenlong","startPreview")
         if (surfaceTextTure == null) return
         try {
             camera?.setPreviewTexture(surfaceTextTure)
@@ -103,6 +105,7 @@ class CameraPresenter(private val surfaceView: SurfaceView) {
     }
 
     fun stopPreview() {
+        Log.e("guowenlong","stopPreview")
         camera?.stopPreview()
     }
 

@@ -48,8 +48,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
     private var takePictureListener: TakePictureListener? = null
 
     fun onSurfaceDestroy() {
-        //todo 销毁相机
-//        filter?.release()
+        cameraPresenter.releaseCamera()
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -73,7 +72,6 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     override fun onDrawFrame(gl: GL10?) {
         runAll(runOnDraw)
-
         MatrixUtils.getMatrix(
             mtx,
             viewSize.width,
@@ -81,7 +79,6 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             cameraSize.width,
             cameraSize.height
         )
-//        surfaceTexture?.getTransformMatrix(mtx)
         surfaceTexture?.updateTexImage()
 
         /**
@@ -170,7 +167,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
     private fun runAll(queue: Queue<Runnable>) {
         synchronized(queue) {
             while (!queue.isEmpty()) {
-                queue.poll().run()
+                queue.poll()?.run()
             }
         }
     }

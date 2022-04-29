@@ -20,7 +20,7 @@ class OneFragment : BaseFragment() {
     override val layoutId = R.layout.fragment_one
 
     private lateinit var cameraView: MultiGLSurfaceView
-    private var isShow = false
+    private var isShow = true
     private var isCool = true
 
     companion object {

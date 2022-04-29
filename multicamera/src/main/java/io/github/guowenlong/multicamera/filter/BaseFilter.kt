@@ -94,29 +94,15 @@ abstract class BaseFilter {
             AssetsUtils.readAssets2String(context, vertexGLSL),
             AssetsUtils.readAssets2String(context, fragmentGLSL)
         )
-        glProgram?.let {
-            GLES20.glUseProgram(it)
-        }
+        GLES20.glUseProgram(glProgram)
     }
 
     open fun glGetAttribLocation(attribute: String): Int {
-        val glAttribute = glProgram?.let {
-            GLES20.glGetAttribLocation(it, attribute)
-        } ?: run {
-            Log.e(TAG, "program is null")
-            0
-        }
-        return glAttribute
+        return GLES20.glGetAttribLocation(glProgram, attribute)
     }
 
     open fun glGetUniformLocation(uni: String): Int {
-        val glUniform = glProgram?.let {
-            GLES20.glGetUniformLocation(it, uni)
-        } ?: run {
-            Log.e(TAG, "program is null")
-            0
-        }
-        return glUniform
+        return GLES20.glGetUniformLocation(glProgram, uni)
     }
 
     open fun bindTexture(textureId: Int) {
