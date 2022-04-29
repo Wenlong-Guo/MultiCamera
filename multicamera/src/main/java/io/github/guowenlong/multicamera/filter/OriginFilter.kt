@@ -8,9 +8,9 @@ import android.content.Context
  * Date:        2022/4/26 16:10
  * Gmail:       guowenlong20000@sina.com
  */
-class OriginFilter(context: Context) : BaseFilter() {
+class OriginFilter(private val context: Context) : BaseFilter() {
 
-    init {
+    override fun init() {
         clear()
         createProgram(context, "camera_vs.glsl", "camera_fs.glsl")
         glPosition = glGetAttribLocation("vPosition")

@@ -10,11 +10,11 @@ import io.github.guowenlong.multicamera.bean.MultiSize
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
 import io.github.guowenlong.multicamera.filter.BaseFilter
-import io.github.guowenlong.multicamera.filter.CoolMagicFilter
 import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
+import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -48,7 +48,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
     private var takePictureListener: TakePictureListener? = null
 
     fun onSurfaceDestroy() {
-        filter?.release()
+        //todo 销毁相机
+//        filter?.release()
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -58,7 +59,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         cameraPresenter.releaseCamera()
         cameraPresenter.openCamera(cameraConfig.cameraId)
         cameraPresenter.startPreview(surfaceTexture)
-        filter = CoolMagicFilter(surfaceView.context)
+        filter = OriginFilter(surfaceView.context)
+        filter?.init()
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -70,6 +72,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
 
     override fun onDrawFrame(gl: GL10?) {
+        runAll(runOnDraw)
+
         MatrixUtils.getMatrix(
             mtx,
             viewSize.width,
@@ -77,7 +81,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             cameraSize.width,
             cameraSize.height
         )
-
+//        surfaceTexture?.getTransformMatrix(mtx)
         surfaceTexture?.updateTexImage()
 
         /**
@@ -150,6 +154,24 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
     }
 
     fun showMagicFilter(magicFilter: BaseFilter) {
-        filter = magicFilter
+        runOnDraw {
+            filter?.release()
+            filter = magicFilter
+            filter?.init()
+        }
+    }
+
+    private val runOnDraw: Queue<Runnable> = LinkedList()
+
+    fun runOnDraw(runnable: Runnable?) {
+        synchronized(runOnDraw) { runOnDraw.add(runnable) }
+    }
+
+    private fun runAll(queue: Queue<Runnable>) {
+        synchronized(queue) {
+            while (!queue.isEmpty()) {
+                queue.poll().run()
+            }
+        }
     }
 }

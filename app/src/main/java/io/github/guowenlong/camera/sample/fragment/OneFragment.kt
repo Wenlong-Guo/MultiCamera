@@ -4,6 +4,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import io.github.guowenlong.camera.sample.R
+import io.github.guowenlong.multicamera.filter.CoolMagicFilter
+import io.github.guowenlong.multicamera.filter.OriginFilter
+import io.github.guowenlong.multicamera.filter.WarmMagicFilter
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
 /**
@@ -18,6 +21,7 @@ class OneFragment : BaseFragment() {
 
     private lateinit var cameraView: MultiGLSurfaceView
     private var isShow = false
+    private var isCool = true
 
     companion object {
         fun instance(): OneFragment {
@@ -28,7 +32,12 @@ class OneFragment : BaseFragment() {
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
         view.findViewById<Button>(R.id.btn_one).setOnClickListener {
-
+            if (isCool) {
+                cameraView.showMagicFilter(WarmMagicFilter(this.requireContext()))
+            } else {
+                cameraView.showMagicFilter(CoolMagicFilter(this.requireContext()))
+            }
+            isCool = !isCool
         }
     }
 

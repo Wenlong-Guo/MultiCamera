@@ -2,11 +2,11 @@ package io.github.guowenlong.multicamera.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.opengl.GLException
+import android.graphics.BitmapFactory
 import android.util.Log
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.nio.charset.Charset
-import javax.microedition.khronos.opengles.GL10
 
 
 /**
@@ -36,5 +36,18 @@ object AssetsUtils {
             Log.e(TAG, "readAssets2String", e)
         }
         return content
+    }
+
+    fun getImageFromAssetsFile(context: Context, fileName: String): Bitmap? {
+        var image: Bitmap? = null
+        val am = context.resources.assets
+        try {
+            val `is` = am.open(fileName)
+            image = BitmapFactory.decodeStream(`is`)
+            `is`.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return image
     }
 }

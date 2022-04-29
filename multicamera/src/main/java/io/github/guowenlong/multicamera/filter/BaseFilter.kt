@@ -26,12 +26,12 @@ abstract class BaseFilter {
     var glCoord = 0
     var glTexture = 0
     var glMatrix = 0
-    var glMatrixCoord = 0
-    var glInputTextureCoordinate = 0
     var cameraId: Int = 0
     var vertexBuffer: FloatBuffer? = null
     var backTextureBuffer: FloatBuffer? = null
     var frontTextureBuffer: FloatBuffer? = null
+
+    abstract fun init()
 
     protected abstract fun onDrawArraysPre()
 
@@ -59,10 +59,11 @@ abstract class BaseFilter {
         onDrawArraysPre()
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
-
+        GLES20.glDisableVertexAttribArray(glPosition)
+        GLES20.glDisableVertexAttribArray(glCoord)
         onDrawArraysAfter()
 
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0)
 
     }
 
@@ -70,7 +71,8 @@ abstract class BaseFilter {
      * 删除 program
      */
     open fun release() {
-        glProgram?.let { GLES20.glDeleteProgram(it) }
+        GLES20.glDeleteProgram(glProgram)
+        glProgram = 0
     }
 
     open fun turnCameraId(cameraId: Int) {
@@ -84,7 +86,7 @@ abstract class BaseFilter {
     open fun clear() {
         //黑色
         GLES20.glClearColor(0f, 0f, 0f, 0f)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
     }
 
     open fun createProgram(context: Context, vertexGLSL: String, fragmentGLSL: String) {

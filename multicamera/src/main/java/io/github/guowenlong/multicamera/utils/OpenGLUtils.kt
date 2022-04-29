@@ -1,7 +1,10 @@
 package io.github.guowenlong.multicamera.utils
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
+import android.opengl.GLUtils
 import android.util.Log
 import javax.microedition.khronos.opengles.GL10
 
@@ -109,5 +112,49 @@ object OpenGLUtils {
             GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE
         )
         return texture[0]
+    }
+
+    fun loadTexture(context: Context, name: String): Int {
+        val textureHandle = IntArray(1)
+        GLES20.glGenTextures(1, textureHandle, 0)
+        if (textureHandle[0] != 0) {
+
+            // Read in the resource
+            val bitmap: Bitmap? = AssetsUtils.getImageFromAssetsFile(context, name)
+
+            // Bind to the texture in OpenGL
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0])
+
+            // Set filtering
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR
+            )
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR
+            )
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_CLAMP_TO_EDGE
+            )
+            GLES20.glTexParameteri(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_CLAMP_TO_EDGE
+            )
+            // Load the bitmap into the bound texture.
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+
+            // Recycle the bitmap, since its data has been loaded into OpenGL.
+            bitmap?.recycle()
+        }
+        if (textureHandle[0] == 0) {
+            throw RuntimeException("Error loading texture.")
+        }
+        return textureHandle[0]
     }
 }
