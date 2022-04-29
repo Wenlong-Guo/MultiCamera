@@ -53,12 +53,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     }
 
     fun forceResume() {
-        visibility = View.VISIBLE
         SingleThreadUtils.execute { renderer.forceResume() }
     }
 
     fun forcePause(){
-        visibility = View.INVISIBLE
         SingleThreadUtils.execute { renderer.forcePause() }
     }
 

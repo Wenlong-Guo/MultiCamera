@@ -4,8 +4,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import io.github.guowenlong.camera.sample.R
+import io.github.guowenlong.camera.sample.base.BaseFragment
 import io.github.guowenlong.multicamera.filter.CoolMagicFilter
-import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.filter.WarmMagicFilter
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 

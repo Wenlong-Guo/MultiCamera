@@ -14,6 +14,7 @@ import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
+import io.github.guowenlong.multicamera.utils.SingleThreadUtils
 import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -55,9 +56,11 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         textureId = OpenGLUtils.createTextureID()
         surfaceTexture = SurfaceTexture(textureId)
         surfaceTexture?.setOnFrameAvailableListener(this)
-        cameraPresenter.releaseCamera()
-        cameraPresenter.openCamera(cameraConfig.cameraId)
-        cameraPresenter.startPreview(surfaceTexture)
+        SingleThreadUtils.execute {
+            cameraPresenter.releaseCamera()
+            cameraPresenter.openCamera(cameraConfig.cameraId)
+            cameraPresenter.startPreview(surfaceTexture)
+        }
         filter = OriginFilter(surfaceView.context)
         filter?.init()
     }

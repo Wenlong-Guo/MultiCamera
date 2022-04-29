@@ -1,4 +1,4 @@
-package io.github.guowenlong.camera.sample.fragment
+package io.github.guowenlong.camera.sample.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

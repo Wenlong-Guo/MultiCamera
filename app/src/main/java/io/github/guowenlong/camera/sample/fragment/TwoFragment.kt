@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.compose.animation.core.RepeatMode
 import io.github.guowenlong.camera.sample.R
+import io.github.guowenlong.camera.sample.base.BaseFragment
 import io.github.guowenlong.multicamera.camera.TakePictureListener
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
@@ -63,7 +64,7 @@ class TwoFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isShow)cameraView.forceResume()
+        if (isShow) cameraView.forceResume()
         Log.e("two", "onResume")
     }
 
