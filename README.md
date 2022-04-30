@@ -25,8 +25,9 @@
 * 基础功能优化
   1. ~~增加Demo的Icon 首页UI 根据功能结构分页面~~
   2. ~~增加Demo 的动态权限~~
-  3. Camera 改为 Camera2
+  3. ~~Camera 改为 Camera2~~
   4. 调试其他滤镜
+  5. 完善Demo
   
 * 录制视频
   1. 手动启停录制

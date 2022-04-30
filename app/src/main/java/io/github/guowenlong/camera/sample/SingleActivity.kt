@@ -16,9 +16,14 @@ class SingleActivity : AppCompatActivity() {
 
     private val glSurfaceView: MultiGLSurfaceView by lazy { findViewById(R.id.glcamera) }
 
+    private val turn : Button by lazy { findViewById(R.id.btn_toggle) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single)
+        turn.setOnClickListener {
+            glSurfaceView.switchCamera()
+        }
     }
 
     override fun onResume() {

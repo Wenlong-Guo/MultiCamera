@@ -10,6 +10,7 @@ import android.view.View
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
 import io.github.guowenlong.multicamera.filter.BaseFilter
+import io.github.guowenlong.multicamera.temp.Camera2Proxy
 import io.github.guowenlong.multicamera.utils.SingleThreadUtils
 
 /**
@@ -23,7 +24,7 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
 
     private val renderer: MultiRenderer
 
-    private val scaleGestureDetector: ScaleGestureDetector
+//    private val scaleGestureDetector: ScaleGestureDetector
 
     init {
         /*设置版本*/
@@ -33,10 +34,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         setRenderer(renderer)
         /*主动调用渲染*/
         renderMode = RENDERMODE_WHEN_DIRTY
-        MultiOnScaleGestureListener(getCameraPresenter()).let {
-            scaleGestureDetector = ScaleGestureDetector(context, it)
-            it.detector = scaleGestureDetector
-        }
+//        MultiOnScaleGestureListener(getCameraPresenter()).let {
+//            scaleGestureDetector = ScaleGestureDetector(context, it)
+//            it.detector = scaleGestureDetector
+//        }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -44,20 +45,24 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         renderer.onSurfaceDestroy()
     }
 
-    fun getCameraPresenter(): CameraPresenter {
+    fun getCameraPresenter(): Camera2Proxy {
         return renderer.getCameraPresenter()
     }
 
     fun switchCamera(cameraId: Int? = null) {
-        SingleThreadUtils.execute { renderer.switchCamera(cameraId) }
+        SingleThreadUtils.execute {
+            renderer.switchCamera(cameraId)
+        }
     }
 
     fun forceResume() {
-        SingleThreadUtils.execute { renderer.forceResume() }
+        renderer.forceResume()
+//        SingleThreadUtils.execute {  }
     }
 
     fun forcePause(){
-        SingleThreadUtils.execute { renderer.forcePause() }
+        renderer.forcePause()
+//        SingleThreadUtils.execute {  }
     }
 
     fun showMagicFilter(magicFilter: BaseFilter){
@@ -68,7 +73,7 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         renderer.takePicture(listener)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return scaleGestureDetector.onTouchEvent(event)
-    }
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        return scaleGestureDetector.onTouchEvent(event)
+//    }
 }

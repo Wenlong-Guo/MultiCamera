@@ -5,12 +5,14 @@ import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.util.Log
 import io.github.guowenlong.multicamera.bean.CameraConfig
 import io.github.guowenlong.multicamera.bean.MultiSize
 import io.github.guowenlong.multicamera.camera.CameraPresenter
 import io.github.guowenlong.multicamera.camera.TakePictureListener
 import io.github.guowenlong.multicamera.filter.BaseFilter
 import io.github.guowenlong.multicamera.filter.OriginFilter
+import io.github.guowenlong.multicamera.temp.Camera2Proxy
 import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
@@ -36,7 +38,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private var filter: BaseFilter? = null
 
-    private var cameraPresenter = CameraPresenter(surfaceView)
+    private var cameraPresenter = Camera2Proxy(surfaceView.context as Activity)
 
     private val cameraSize = MultiSize()
 
@@ -56,11 +58,14 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         textureId = OpenGLUtils.createTextureID()
         surfaceTexture = SurfaceTexture(textureId)
         surfaceTexture?.setOnFrameAvailableListener(this)
-        SingleThreadUtils.execute {
-            cameraPresenter.releaseCamera()
-            cameraPresenter.openCamera(cameraConfig.cameraId)
-            cameraPresenter.startPreview(surfaceTexture)
-        }
+//        SingleThreadUtils.execute {
+//            cameraPresenter.releaseCamera()
+//        (surfaceView.context as Activity).runOnUiThread {
+        cameraPresenter.openCamera(cameraConfig.cameraId)
+        cameraPresenter.setPreviewSurface(surfaceTexture!!)
+//        }
+//            cameraPresenter.startPreview()
+//        }
         filter = OriginFilter(surfaceView.context)
         filter?.init()
     }
@@ -68,7 +73,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         cameraSize.cover(width, height)
         filter?.turnCameraId(cameraConfig.cameraId)
-        viewSize = cameraPresenter.cameraSize
+//        viewSize = cameraPresenter.cameraSize
         GLES20.glViewport(0, 0, width, height)
     }
 
@@ -77,8 +82,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         runAll(runOnDraw)
         MatrixUtils.getMatrix(
             mtx,
-            viewSize.width,
-            viewSize.height,
+            cameraSize.width,
+            cameraSize.height,
             cameraSize.width,
             cameraSize.height
         )
@@ -110,13 +115,14 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
                 }
             isEnableDraw = false
             cameraPresenter.switchCamera(cameraConfig.cameraId)
-            viewSize = cameraPresenter.cameraSize
-            cameraPresenter.startPreview(surfaceTexture)
+//            viewSize = cameraPresenter.cameraSize
+            cameraPresenter.setPreviewSurface(surfaceTexture!!)
+            cameraPresenter.startPreview()
             filter?.turnCameraId(cameraConfig.cameraId)
         }
     }
 
-    fun getCameraPresenter(): CameraPresenter {
+    fun getCameraPresenter(): Camera2Proxy {
         return cameraPresenter
     }
 
@@ -124,12 +130,17 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
      * 强制恢复
      */
     fun forceResume() {
-        cameraPresenter.switchCamera(cameraConfig.cameraId)
-        cameraPresenter.startPreview(surfaceTexture)
+
+        surfaceTexture?.let {
+            cameraPresenter.setPreviewSurface(it)
+            cameraPresenter.switchCamera(cameraConfig.cameraId)
+        }
+//
+//        cameraPresenter.startPreview()
     }
 
     fun forcePause() {
-        cameraPresenter.stopPreview()
+        cameraPresenter.releaseCamera()
     }
 
     /**
