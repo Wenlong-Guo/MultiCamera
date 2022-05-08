@@ -9,7 +9,9 @@ import java.util.concurrent.Executors
  * Gmail:       guowenlong20000@sina.com
  */
 object SingleThreadUtils {
+
     private val pool by lazy { Executors.newSingleThreadExecutor() }
+
     fun execute(runnable: Runnable) {
         pool.execute(runnable)
     }

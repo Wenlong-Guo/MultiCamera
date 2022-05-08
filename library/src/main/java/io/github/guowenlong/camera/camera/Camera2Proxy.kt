@@ -1,4 +1,4 @@
-package io.github.guowenlong.multicamera.temp
+package io.github.guowenlong.camera.camera
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi

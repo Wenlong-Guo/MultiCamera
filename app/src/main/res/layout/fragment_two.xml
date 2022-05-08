@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
+    <io.github.guowenlong.camera.widget.MultiGLSurfaceView
         android:id="@+id/glcamera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

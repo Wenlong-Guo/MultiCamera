@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
+    <io.github.guowenlong.camera.widget.MultiGLSurfaceView
         android:id="@+id/glcamera"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"

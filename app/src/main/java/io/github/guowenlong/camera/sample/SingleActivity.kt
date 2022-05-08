@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
+import io.github.guowenlong.camera.camera.Camera2Presenter
+import io.github.guowenlong.camera.widget.MultiGLSurfaceView
+import io.github.guowenlong.camera.widget.MultiRenderer
+
+//import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
 /**
  * Description: 单个activity
@@ -21,19 +25,23 @@ class SingleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single)
+//        val camera2 = Camera2Presenter(this)
+//        val renderer = glSurfaceView.getRenderer()
+//        renderer.bindCamera(camera2)
         turn.setOnClickListener {
-            glSurfaceView.switchCamera()
+//            glSurfaceView.switchCamera()
+//            renderer.forceResume()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        glSurfaceView.forceResume()
+//        glSurfaceView.forceResume()
     }
 
     override fun onPause() {
         super.onPause()
-        glSurfaceView.forcePause()
+//        glSurfaceView.forcePause()
     }
 
 }

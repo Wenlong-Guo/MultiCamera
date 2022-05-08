@@ -1,6 +1,7 @@
 package io.github.guowenlong.multicamera.widget
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.opengl.GLES20
@@ -50,7 +51,10 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private var takePictureListener: TakePictureListener? = null
 
+    private var isDrawEnable = true
+
     fun onSurfaceDestroy() {
+        Log.e("guowenlong", "onSurfaceDestroy")
         cameraPresenter.releaseCamera()
     }
 
@@ -61,8 +65,8 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 //        SingleThreadUtils.execute {
 //            cameraPresenter.releaseCamera()
 //        (surfaceView.context as Activity).runOnUiThread {
-        cameraPresenter.openCamera(cameraConfig.cameraId)
-        cameraPresenter.setPreviewSurface(surfaceTexture!!)
+//        cameraPresenter.openCamera(cameraConfig.cameraId)
+//        cameraPresenter.setPreviewSurface(surfaceTexture!!)
 //        }
 //            cameraPresenter.startPreview()
 //        }
@@ -130,17 +134,30 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
      * 强制恢复
      */
     fun forceResume() {
-
-        surfaceTexture?.let {
-            cameraPresenter.setPreviewSurface(it)
-            cameraPresenter.switchCamera(cameraConfig.cameraId)
+        if (!isDrawEnable) {
+            isDrawEnable = false
+            return
         }
+        cameraPresenter.openCamera(cameraConfig.cameraId)
+        cameraPresenter.setPreviewSurface(surfaceTexture!!)
+//        SingleThreadUtils.execute {
+//            (surfaceView.context as Activity).runOnUiThread {
+//        surfaceTexture?.let {
+//            cameraPresenter.switchCamera(cameraConfig.cameraId)
+//                }
+//            }
+//        }
 //
 //        cameraPresenter.startPreview()
     }
 
     fun forcePause() {
+//        SingleThreadUtils.execute {
+//            (surfaceView.context as Activity).runOnUiThread {
+        cameraPresenter.stopPreview()
         cameraPresenter.releaseCamera()
+//            }
+//        }
     }
 
     /**

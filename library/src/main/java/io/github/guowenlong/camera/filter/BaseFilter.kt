@@ -1,10 +1,10 @@
-package io.github.guowenlong.multicamera.filter
+package io.github.guowenlong.camera.filter
 
 import android.content.Context
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
-import io.github.guowenlong.multicamera.utils.AssetsUtils
-import io.github.guowenlong.multicamera.utils.OpenGLUtils
+import io.github.guowenlong.camera.utils.AssetsUtils
+import io.github.guowenlong.camera.utils.OpenGLUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer

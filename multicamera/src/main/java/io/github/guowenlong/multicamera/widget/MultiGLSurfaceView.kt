@@ -40,6 +40,10 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
 //        }
     }
 
+    fun resetNullRenderer() {
+        setRenderer(null)
+    }
+
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         super.surfaceDestroyed(holder)
         renderer.onSurfaceDestroy()
@@ -60,12 +64,12 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
 //        SingleThreadUtils.execute {  }
     }
 
-    fun forcePause(){
+    fun forcePause() {
         renderer.forcePause()
 //        SingleThreadUtils.execute {  }
     }
 
-    fun showMagicFilter(magicFilter: BaseFilter){
+    fun showMagicFilter(magicFilter: BaseFilter) {
         renderer.showMagicFilter(magicFilter)
     }
 
