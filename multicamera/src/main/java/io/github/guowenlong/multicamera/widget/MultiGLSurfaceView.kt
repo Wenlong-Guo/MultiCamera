@@ -28,6 +28,7 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     init {
         /*设置版本*/
         setEGLContextClientVersion(2)
+        preserveEGLContextOnPause = true
         /*设置Renderer*/
         renderer = MultiRenderer(this)
         setRenderer(renderer)
@@ -53,11 +54,15 @@ class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     }
 
     fun forceResume() {
-        SingleThreadUtils.execute { renderer.forceResume() }
+        onResume()
+        SingleThreadUtils.execute {
+            renderer.forceResume() }
     }
 
     fun forcePause(){
-        SingleThreadUtils.execute { renderer.forcePause() }
+        onPause()
+        SingleThreadUtils.execute {
+            renderer.forcePause() }
     }
 
     fun showMagicFilter(magicFilter: BaseFilter){
