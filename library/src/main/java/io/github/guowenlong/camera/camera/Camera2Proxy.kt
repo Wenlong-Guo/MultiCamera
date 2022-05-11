@@ -215,7 +215,7 @@ class Camera2Proxy @TargetApi(Build.VERSION_CODES.M) constructor(activity: Activ
     fun stopPreview() {
         Log.v(TAG, "stopPreview")
         if (mCaptureSession == null || mPreviewRequestBuilder == null) {
-            Log.w(TAG, "stopPreview: mCaptureSession or mPreviewRequestBuilder is null")
+            Log.w(TAG, "stopPreview: mCaptureSession $mCaptureSession or mPreviewRequestBuilder $mPreviewRequestBuilder is null")
             return
         }
         try {

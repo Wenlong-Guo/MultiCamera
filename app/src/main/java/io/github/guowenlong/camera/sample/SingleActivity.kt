@@ -29,6 +29,8 @@ class SingleActivity : AppCompatActivity() {
 //        val renderer = glSurfaceView.getRenderer()
 //        renderer.bindCamera(camera2)
         turn.setOnClickListener {
+            glSurfaceView.onResume()
+            glSurfaceView.getRenderer().forceResume()
 //            glSurfaceView.switchCamera()
 //            renderer.forceResume()
         }
@@ -36,11 +38,14 @@ class SingleActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        glSurfaceView.forceResume()
+//        glSurfaceView.onResume()
+        glSurfaceView.getRenderer().forceResume()
     }
 
     override fun onPause() {
         super.onPause()
+        glSurfaceView.getRenderer().forceStop()
+
 //        glSurfaceView.forcePause()
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.SurfaceTexture
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.util.Log
 import android.view.SurfaceHolder
 import io.github.guowenlong.camera.bean.CameraLensFacing
 import io.github.guowenlong.camera.bean.MultiSize
@@ -15,6 +16,7 @@ import io.github.guowenlong.camera.filter.BaseFilter
 import io.github.guowenlong.camera.filter.OriginFilter
 import io.github.guowenlong.camera.utils.MatrixUtils
 import io.github.guowenlong.camera.utils.OpenGLUtils
+import io.github.guowenlong.camera.utils.SingleThreadUtils
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -25,6 +27,10 @@ import javax.microedition.khronos.opengles.GL10
  * Gmail:       guowenlong20000@sina.com
  */
 class MultiRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Renderer, IRenderer {
+
+    companion object {
+        private const val TAG = "MultiRenderer"
+    }
 
     private var camera = Camera2Proxy(surfaceView.context as Activity)
 
@@ -43,10 +49,8 @@ class MultiRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rend
     private val frameAvailableListener =
         SurfaceTexture.OnFrameAvailableListener { surfaceView.requestRender() }
 
-    private var isSurfaceCreated = false
-
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        isSurfaceCreated = true
+        Log.e(TAG, "onSurfaceCreated")
         OpenGLUtils.createTextureID().also {
             textureId = it
             surfaceTexture = SurfaceTexture(it)
@@ -63,6 +67,7 @@ class MultiRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rend
     }
 
     override fun onSurfaceChanged(gl10: GL10?, width: Int, height: Int) {
+        Log.e(TAG, "onSurfaceChanged")
         size.coverPreviewSize(width, height)
         size.coverViewSize(width, height)
         filter?.turnCameraId(lensFacing.camera1)
@@ -105,12 +110,16 @@ class MultiRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rend
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        isSurfaceCreated = false
-        camera.releaseCamera()
+        Log.e(TAG, "surfaceDestroyed")
+        SingleThreadUtils.execute {
+            camera.stopPreview()
+            camera.releaseCamera()
+        }
     }
 
     override fun forceResume() {
-        if (!isSurfaceCreated || surfaceTexture == null) return
+        if (surfaceTexture == null) return
+        Log.e(TAG, "forceResume")
         surfaceTexture?.also {
             it.setOnFrameAvailableListener(frameAvailableListener)
             camera.releaseCamera()
@@ -120,7 +129,6 @@ class MultiRenderer(private val surfaceView: GLSurfaceView) : GLSurfaceView.Rend
     }
 
     override fun forceStop() {
-        camera.stopPreview()
-        camera.releaseCamera()
+
     }
 }

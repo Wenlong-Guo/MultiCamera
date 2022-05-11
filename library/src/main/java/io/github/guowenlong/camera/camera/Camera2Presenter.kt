@@ -150,7 +150,11 @@ class Camera2Presenter(private val activity: Activity) : ICamera {
     }
 
     override fun releaseCamera() {
+        mCaptureSession?.close()
+        mCaptureSession = null
 
+        cameraDevice?.close()
+        cameraDevice = null
     }
 
     override fun switchCamera(cameraLensFacing: CameraLensFacing) {
