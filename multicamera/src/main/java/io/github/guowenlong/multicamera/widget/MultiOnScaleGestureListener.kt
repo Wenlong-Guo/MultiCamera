@@ -1,8 +1,8 @@
 package io.github.guowenlong.multicamera.widget
 
-import android.util.Log
 import android.view.ScaleGestureDetector
-import io.github.guowenlong.multicamera.camera.CameraPresenter
+import io.github.guowenlong.multicamera.camera1.Camera1Presenter
+import io.github.guowenlong.multicamera.core.ICamera
 import kotlin.math.roundToInt
 
 /**
@@ -12,7 +12,7 @@ import kotlin.math.roundToInt
  * Gmail:       guowenlong20000@sina.com
  */
 class MultiOnScaleGestureListener(
-    private val cameraPresenter: CameraPresenter
+    private val cameraPresenter: ICamera
 ) :
     ScaleGestureDetector.OnScaleGestureListener {
 
@@ -30,7 +30,7 @@ class MultiOnScaleGestureListener(
         if (mScaleFactor > 1) {
             mScaleFactor = 1f
         }
-        cameraPresenter.getMaxZoom()?.let { maxZoom ->
+        cameraPresenter.getMaxZoom().let { maxZoom ->
             val zoomValue = (mScaleFactor * maxZoom).roundToInt() / 2
             cameraPresenter.setZoom(zoomValue)
         }

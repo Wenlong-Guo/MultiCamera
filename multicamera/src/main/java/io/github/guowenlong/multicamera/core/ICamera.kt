@@ -1,0 +1,72 @@
+package io.github.guowenlong.multicamera.core
+
+import android.graphics.SurfaceTexture
+import io.github.guowenlong.multicamera.bean.CameraLensFacing
+import io.github.guowenlong.multicamera.bean.MultiSize
+
+/**
+ * Description: 相机接口
+ * Author:      郭文龙
+ * Date:        2022/5/12 19:06
+ * Gmail:       guowenlong20000@sina.com
+ */
+interface ICamera {
+
+    /**
+     * 打开相机
+     */
+    fun openCamera(cameraLensFacing: CameraLensFacing, size: MultiSize? = null)
+
+    /**
+     * 相机开始预览
+     */
+    fun startPreview(surfaceTexture: SurfaceTexture?)
+
+    /**
+     * 相机停止预览
+     */
+    fun stopPreview()
+
+    /**
+     * 释放相机资源
+     */
+    fun releaseCamera()
+
+    /**
+     * 切换相机镜头朝向
+     */
+    fun switchCamera(cameraLensFacing: CameraLensFacing)
+
+
+    /**
+     * 获取最大缩放比
+     */
+    fun getMaxZoom(): Int
+
+    /**
+     * 设置缩放比
+     */
+    fun setZoom(zoom: Int)
+
+    /**
+     * 获取size
+     */
+    fun getMultiSize(): MultiSize
+
+    /**
+     * 拍照
+     */
+//    fun takePicture()
+    /**
+     * 开始录像
+     */
+//    fun startRecord()
+    /**9
+     * 停止录像
+     */
+//    fun stopRecord()
+    /**
+     * 暂停录像 (分段录制)
+     */
+//    fun pauseRecord()
+}

@@ -1,23 +1,22 @@
-package io.github.guowenlong.multicamera.widget
+package io.github.guowenlong.multicamera.camera1
 
 import android.app.Activity
 import android.graphics.SurfaceTexture
-import android.hardware.Camera
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.util.Log
-import io.github.guowenlong.multicamera.bean.CameraConfig
+import android.view.SurfaceHolder
+import io.github.guowenlong.multicamera.bean.CameraLensFacing
 import io.github.guowenlong.multicamera.bean.MultiSize
-import io.github.guowenlong.multicamera.camera.CameraPresenter
-import io.github.guowenlong.multicamera.camera.TakePictureListener
+import io.github.guowenlong.multicamera.core.ICamera
+import io.github.guowenlong.multicamera.core.IRenderer
 import io.github.guowenlong.multicamera.filter.BaseFilter
 import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.utils.GLSurfaceViewUtils
 import io.github.guowenlong.multicamera.utils.MatrixUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
 import io.github.guowenlong.multicamera.utils.SingleThreadUtils
-import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
+import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -27,7 +26,8 @@ import javax.microedition.khronos.opengles.GL10
  * Date:        2022/4/26 15:59
  * Gmail:       guowenlong20000@sina.com
  */
-class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView.Renderer,
+class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView.Renderer,
+    IRenderer,
     SurfaceTexture.OnFrameAvailableListener {
 
     companion object {
@@ -42,23 +42,15 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     private var filter: BaseFilter? = null
 
-    private var cameraPresenter = CameraPresenter(surfaceView)
+    private var cameraPresenter: ICamera = Camera1Presenter(surfaceView)
 
-    private val cameraSize = MultiSize()
+    private val size = MultiSize()
 
-    private var viewSize = MultiSize()
-
-    private var cameraConfig = CameraConfig()
+    private var cameraLensFacing = CameraLensFacing.FRONT
 
     private var isEnableDraw = true
-    private var isEnable = true
 
     private var takePictureListener: TakePictureListener? = null
-
-    fun onSurfaceDestroy() {
-        Log.e(TAG + surfaceTexture, "onSurfaceDestroy")
-        cameraPresenter.releaseCamera()
-    }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         Log.e(TAG + surfaceTexture, "onSurfaceCreated")
@@ -68,7 +60,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         surfaceTexture?.setOnFrameAvailableListener(this)
         SingleThreadUtils.execute {
             cameraPresenter.releaseCamera()
-            cameraPresenter.openCamera(cameraConfig.cameraId)
+            cameraPresenter.openCamera(cameraLensFacing)
             cameraPresenter.startPreview(surfaceTexture)
         }
         filter = OriginFilter(surfaceView.context)
@@ -77,34 +69,35 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         Log.e(TAG + surfaceTexture, "onSurfaceChanged")
-
-        cameraSize.cover(width, height)
-        filter?.turnCameraId(cameraConfig.cameraId)
-        viewSize = cameraPresenter.cameraSize
+        size.coverViewSize(width, height)
+        filter?.turnCameraId(cameraLensFacing)
+        size.coverPreviewSize(
+            cameraPresenter.getMultiSize().previewWidth,
+            cameraPresenter.getMultiSize().previewHeight
+        )
         GLES20.glViewport(0, 0, width, height)
     }
 
 
     override fun onDrawFrame(gl: GL10?) {
-        Log.e(TAG + surfaceTexture, "onDrawFrame isEnable$isEnable")
         runAll(runOnDraw)
+        Log.e(TAG, "size:$size")
         MatrixUtils.getMatrix(
             mtx,
-            viewSize.width,
-            viewSize.height,
-            cameraSize.width,
-            cameraSize.height
+            size.previewWidth,
+            size.previewHeight,
+            size.viewWidth,
+            size.viewHeight
         )
         surfaceTexture?.updateTexImage()
 
         /**
          * 过滤掉颠倒的那帧
          */
-        if (!isEnable) return
         if (!isEnableDraw) {
             surfaceView.postDelayed({ isEnableDraw = true }, 100)
         } else {
-            filter?.onDraw(mtx, textureId, cameraConfig.cameraId)
+            filter?.onDraw(mtx, textureId, cameraLensFacing)
         }
 
         checkTakePicture(gl)
@@ -114,47 +107,59 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
         surfaceView.requestRender()
     }
 
-    fun switchCamera(cameraId: Int?) {
+    override fun switchCamera(cameraLensFacing: CameraLensFacing?) {
         surfaceTexture?.let {
-            cameraConfig.cameraId =
-                cameraId ?: if (cameraConfig.cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    Camera.CameraInfo.CAMERA_FACING_BACK
-                } else {
-                    Camera.CameraInfo.CAMERA_FACING_FRONT
-                }
-            isEnableDraw = false
-            cameraPresenter.switchCamera(cameraConfig.cameraId)
-            viewSize = cameraPresenter.cameraSize
-            cameraPresenter.startPreview(surfaceTexture)
-            filter?.turnCameraId(cameraConfig.cameraId)
+            SingleThreadUtils.execute {
+                this.cameraLensFacing =
+                    cameraLensFacing ?: if (this.cameraLensFacing == CameraLensFacing.FRONT) {
+                        CameraLensFacing.BACK
+                    } else {
+                        CameraLensFacing.FRONT
+                    }
+                isEnableDraw = false
+                cameraPresenter.switchCamera(this.cameraLensFacing)
+                size.coverPreviewSize(
+                    cameraPresenter.getMultiSize().previewWidth,
+                    cameraPresenter.getMultiSize().previewHeight
+                )
+                cameraPresenter.startPreview(surfaceTexture)
+                filter?.turnCameraId(this.cameraLensFacing)
+            }
         }
     }
 
-    fun getCameraPresenter(): CameraPresenter {
-        return cameraPresenter
+    override fun getCamera(): ICamera = cameraPresenter
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        Log.e(TAG + surfaceTexture, "onSurfaceDestroy")
+        cameraPresenter.releaseCamera()
     }
 
     /**
      * 强制恢复
      */
-    fun forceResume() {
-        isEnable = true
-        Log.e(TAG + surfaceTexture, "forceResume")
-        cameraPresenter.switchCamera(cameraConfig.cameraId)
-        cameraPresenter.startPreview(surfaceTexture)
+    override fun forceResume() {
+        SingleThreadUtils.execute {
+            Log.e(TAG + surfaceTexture, "forceResume")
+            surfaceView.onResume()
+            cameraPresenter.switchCamera(cameraLensFacing)
+            cameraPresenter.startPreview(surfaceTexture)
+        }
     }
 
-    fun forcePause() {
-        isEnable = false
-        Log.e(TAG + surfaceTexture, "forcePause")
-        cameraPresenter.stopPreview()
-        cameraPresenter.releaseCamera()
+    override fun forcePause() {
+        SingleThreadUtils.execute {
+            surfaceView.onPause()
+            Log.e(TAG + surfaceTexture, "forcePause")
+            cameraPresenter.stopPreview()
+            cameraPresenter.releaseCamera()
+        }
     }
 
     /**
      * 无声拍照
      */
-    fun takePicture(listener: TakePictureListener) {
+    override fun takePicture(listener: TakePictureListener) {
         takePictureListener = listener
     }
 
@@ -163,7 +168,7 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
      */
     private fun checkTakePicture(gl: GL10?) {
         if (takePictureListener == null) return
-        GLSurfaceViewUtils.createBitmapFromGLSurface(0, 0, cameraSize.width, cameraSize.height, gl)
+        GLSurfaceViewUtils.createBitmapFromGLSurface(0, 0, size.viewWidth, size.viewHeight, gl)
             ?.let {
                 (surfaceView.context as Activity).runOnUiThread {
                     takePictureListener?.onCollect(it)
@@ -172,25 +177,11 @@ class MultiRenderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceView
             }
     }
 
-    fun showMagicFilter(magicFilter: BaseFilter) {
+    override fun showMagicFilter(magicFilter: BaseFilter) {
         runOnDraw {
             filter?.release()
             filter = magicFilter
             filter?.init()
-        }
-    }
-
-    private val runOnDraw: Queue<Runnable> = LinkedList()
-
-    fun runOnDraw(runnable: Runnable?) {
-        synchronized(runOnDraw) { runOnDraw.add(runnable) }
-    }
-
-    private fun runAll(queue: Queue<Runnable>) {
-        synchronized(queue) {
-            while (!queue.isEmpty()) {
-                queue.poll()?.run()
-            }
         }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.util.Log
+import io.github.guowenlong.multicamera.bean.CameraLensFacing
 import io.github.guowenlong.multicamera.utils.AssetsUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
 import java.nio.ByteBuffer
@@ -37,7 +38,7 @@ abstract class BaseFilter {
 
     protected abstract fun onDrawArraysAfter()
 
-    open fun onDraw(mtx: FloatArray, textureId: Int, cameraId: Int) {
+    open fun onDraw(mtx: FloatArray, textureId: Int, cameraLensFacing: CameraLensFacing) {
         clear()
         vertexBuffer?.position(0)
         GLES20.glVertexAttribPointer(glPosition, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
@@ -75,8 +76,8 @@ abstract class BaseFilter {
         glProgram = 0
     }
 
-    open fun turnCameraId(cameraId: Int) {
-        this.cameraId = cameraId
+    open fun turnCameraId(cameraLensFacing: CameraLensFacing) {
+        this.cameraId = cameraLensFacing.camera1
         initBuffer()
     }
 

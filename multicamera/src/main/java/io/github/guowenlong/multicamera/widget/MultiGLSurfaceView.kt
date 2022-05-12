@@ -6,9 +6,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
-import android.view.View
-import io.github.guowenlong.multicamera.camera.CameraPresenter
-import io.github.guowenlong.multicamera.camera.TakePictureListener
+import io.github.guowenlong.multicamera.bean.CameraLensFacing
+import io.github.guowenlong.multicamera.camera1.Camera1Presenter
+import io.github.guowenlong.multicamera.camera1.Camera1Renderer
+import io.github.guowenlong.multicamera.camera1.TakePictureListener
+import io.github.guowenlong.multicamera.core.ICamera
+import io.github.guowenlong.multicamera.core.IRenderer
 import io.github.guowenlong.multicamera.filter.BaseFilter
 import io.github.guowenlong.multicamera.utils.SingleThreadUtils
 
@@ -18,54 +21,47 @@ import io.github.guowenlong.multicamera.utils.SingleThreadUtils
  * Date:        2022/4/26 16:00
  * Gmail:       guowenlong20000@sina.com
  */
-class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
+open class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
     GLSurfaceView(context, attrs) {
 
-    private val renderer: MultiRenderer
+    private lateinit var renderer: IRenderer
 
-    private val scaleGestureDetector: ScaleGestureDetector
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     init {
+
+
+    }
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        super.surfaceDestroyed(holder)
+        renderer.surfaceDestroyed(holder)
+    }
+
+    fun setIRenderer(renderer: IRenderer, renderMode: Int = RENDERMODE_WHEN_DIRTY) {
         /*设置版本*/
         setEGLContextClientVersion(2)
         preserveEGLContextOnPause = true
         /*设置Renderer*/
-        renderer = MultiRenderer(this)
-        setRenderer(renderer)
+        this.renderer = renderer
+        this.setRenderer(renderer)
         /*主动调用渲染*/
-        renderMode = RENDERMODE_WHEN_DIRTY
+        this.renderMode = renderMode
         MultiOnScaleGestureListener(getCameraPresenter()).let {
             scaleGestureDetector = ScaleGestureDetector(context, it)
             it.detector = scaleGestureDetector
         }
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        super.surfaceDestroyed(holder)
-        renderer.onSurfaceDestroy()
+    fun getRenderer(): IRenderer {
+        return renderer
     }
 
-    fun getCameraPresenter(): CameraPresenter {
-        return renderer.getCameraPresenter()
+    fun getCameraPresenter(): ICamera {
+        return renderer.getCamera()
     }
 
-    fun switchCamera(cameraId: Int? = null) {
-        SingleThreadUtils.execute { renderer.switchCamera(cameraId) }
-    }
-
-    fun forceResume() {
-        onResume()
-        SingleThreadUtils.execute {
-            renderer.forceResume() }
-    }
-
-    fun forcePause(){
-        onPause()
-        SingleThreadUtils.execute {
-            renderer.forcePause() }
-    }
-
-    fun showMagicFilter(magicFilter: BaseFilter){
+    fun showMagicFilter(magicFilter: BaseFilter) {
         renderer.showMagicFilter(magicFilter)
     }
 

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Button
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.camera.sample.base.BaseFragment
+import io.github.guowenlong.multicamera.camera1.Camera1Renderer
 import io.github.guowenlong.multicamera.filter.CoolMagicFilter
 import io.github.guowenlong.multicamera.filter.WarmMagicFilter
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
@@ -31,6 +32,7 @@ class OneFragment : BaseFragment() {
 
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
+        cameraView.setIRenderer(Camera1Renderer(cameraView))
         view.findViewById<Button>(R.id.btn_one).setOnClickListener {
             if (isCool) {
                 cameraView.showMagicFilter(WarmMagicFilter(this.requireContext()))
@@ -43,22 +45,22 @@ class OneFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isShow) cameraView.forceResume()
+        if (isShow) cameraView.getRenderer().forceResume()
         Log.e("one", "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        cameraView.forcePause()
+        cameraView.getRenderer().forcePause()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         isShow = !hidden
         if (hidden) {
-            cameraView.forcePause()
+            cameraView.getRenderer().forcePause()
         } else {
-            cameraView.forceResume()
+            cameraView.getRenderer().forceResume()
         }
         Log.e("one", "onHiddenChanged")
     }

@@ -1,0 +1,46 @@
+package io.github.guowenlong.multicamera.core
+
+import android.opengl.GLSurfaceView
+import android.view.SurfaceHolder
+import io.github.guowenlong.multicamera.bean.CameraLensFacing
+import io.github.guowenlong.multicamera.camera1.TakePictureListener
+import io.github.guowenlong.multicamera.filter.BaseFilter
+import java.util.*
+
+/**
+ * Description: 渲染器的接口
+ * Author:      郭文龙
+ * Date:        2022/5/12 19:07
+ * Gmail:       guowenlong20000@sina.com
+ */
+interface IRenderer : GLSurfaceView.Renderer {
+
+    fun getCamera(): ICamera
+
+    fun surfaceDestroyed(holder: SurfaceHolder)
+
+    fun forceResume()
+
+    fun forcePause()
+
+    fun showMagicFilter(filter: BaseFilter)
+
+    fun switchCamera(cameraLensFacing: CameraLensFacing? = null)
+
+    fun takePicture(listener: TakePictureListener)
+
+    val runOnDraw: Queue<Runnable>
+        get() = LinkedList()
+
+    fun runOnDraw(runnable: Runnable?) {
+        synchronized(runOnDraw) { runOnDraw.add(runnable) }
+    }
+
+    fun runAll(queue: Queue<Runnable>) {
+        synchronized(queue) {
+            while (!queue.isEmpty()) {
+                queue.poll()?.run()
+            }
+        }
+    }
+}

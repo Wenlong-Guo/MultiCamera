@@ -1,4 +1,4 @@
-package io.github.guowenlong.multicamera.camera
+package io.github.guowenlong.multicamera.camera1
 
 import android.graphics.Bitmap
 

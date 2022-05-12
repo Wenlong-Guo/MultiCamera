@@ -9,7 +9,8 @@ import android.widget.ImageView
 import androidx.compose.animation.core.RepeatMode
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.camera.sample.base.BaseFragment
-import io.github.guowenlong.multicamera.camera.TakePictureListener
+import io.github.guowenlong.multicamera.camera1.Camera1Renderer
+import io.github.guowenlong.multicamera.camera1.TakePictureListener
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
 /**
@@ -33,10 +34,10 @@ class TwoFragment : BaseFragment() {
     private var isShow = false
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
-
+        cameraView.setIRenderer(Camera1Renderer(cameraView))
         picture = view.findViewById<ImageView>(R.id.iv_picture)
         view.findViewById<Button>(R.id.btn).setOnClickListener {
-            cameraView.switchCamera()
+            cameraView.getRenderer().switchCamera()
         }
 
         view.findViewById<Button>(R.id.btn_picture).setOnClickListener {
@@ -64,22 +65,22 @@ class TwoFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (isShow) cameraView.forceResume()
+        if (isShow) cameraView.getRenderer().forceResume()
         Log.e("two", "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        cameraView.forcePause()
+        cameraView.getRenderer().forcePause()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         isShow = !hidden
         if (hidden) {
-            cameraView.forcePause()
+            cameraView.getRenderer().forcePause()
         } else {
-            cameraView.forceResume()
+            cameraView.getRenderer().forceResume()
         }
         Log.e("two", "onHiddenChanged")
     }
