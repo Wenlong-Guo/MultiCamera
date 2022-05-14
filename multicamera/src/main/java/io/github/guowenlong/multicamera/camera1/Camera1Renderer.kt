@@ -44,7 +44,7 @@ class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceVi
 
     private val size = MultiSize()
 
-    private var cameraLensFacing = CameraLensFacing.FRONT
+    private var cameraLensFacing = CameraLensFacing.BACK
 
     private var isEnableDraw = true
 

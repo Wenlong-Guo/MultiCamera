@@ -1,5 +1,6 @@
 package io.github.guowenlong.multicamera.core
 
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import io.github.guowenlong.multicamera.bean.CameraLensFacing
@@ -64,6 +65,8 @@ interface ICamera {
         raw: Camera.PictureCallback? = null,
         jpeg: Camera.PictureCallback
     )
+
+    fun focusOnRect(rect: Rect)
 
     /**
      * 开始录像

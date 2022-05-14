@@ -1,5 +1,6 @@
 package io.github.guowenlong.multicamera.camera1
 
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.util.Log
@@ -66,7 +67,8 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
             camera = Camera.open(cameraLensFacing.camera1)
             val parameters = camera?.parameters
             if (parameters?.supportedFocusModes?.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) == true) {
-                parameters.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+//                parameters.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+                parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
             } else {
                 parameters?.supportedFocusModes?.get(0)?.let {
                     parameters.focusMode = it
@@ -111,5 +113,28 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
     override fun stopPreview() {
         Log.e("guowenlong", "stopPreview")
         camera?.stopPreview()
+    }
+
+    override fun focusOnRect(rect: Rect) {
+        val parameters: Camera.Parameters? = camera?.parameters // 先获取当前相机的参数配置对象
+        parameters?.focusMode = Camera.Parameters.FOCUS_MODE_AUTO // 设置聚焦模式
+        Log.d(TAG, "parameters.getMaxNumFocusAreas() : " + parameters?.maxNumMeteringAreas)
+        if (parameters?.maxNumFocusAreas ?: 0 > 0) {
+            val focusAreas: MutableList<Camera.Area> = mutableListOf()
+            focusAreas.add(Camera.Area(rect, 900))
+            parameters?.focusAreas = focusAreas
+        }
+        if (parameters?.maxNumMeteringAreas ?: 0 > 0) {
+            val focusAreas: MutableList<Camera.Area> = mutableListOf()
+            focusAreas.add(Camera.Area(rect, 100))
+            parameters?.meteringAreas = focusAreas
+        }
+        try {
+            camera?.cancelAutoFocus() // 先要取消掉进程中所有的聚焦功能
+            camera?.parameters = parameters // 一定要记得把相应参数设置给相机
+            camera?.autoFocus { p0, camera -> Log.e(TAG, "auto : $p0") }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 }

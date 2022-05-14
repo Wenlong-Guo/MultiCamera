@@ -1,8 +1,10 @@
 package io.github.guowenlong.multicamera.utils
 
+import android.content.Context
 import android.graphics.*
 import android.hardware.Camera
 import android.util.Log
+import android.view.MotionEvent
 import kotlin.math.abs
 
 /**
@@ -87,5 +89,22 @@ object CameraUtils {
         cv.drawBitmap(new2, Rect(0, 0, new2.width, new2.height), Rect(0, 0, w, h), null)
         bitmap.recycle()
         return newb
+    }
+
+
+    fun getRect(event: MotionEvent, length: Int, context: Context): Rect {
+        val screenWidth = context.resources.displayMetrics.widthPixels
+        val screenHeight = context.resources.displayMetrics.heightPixels
+        val rawX = event.rawY * screenWidth / screenHeight
+        val rawY = (screenWidth - event.rawX) * screenHeight / screenWidth
+        val areaX = (rawX / screenWidth * 2000).toInt() - 1000 // 获取映射区域的X坐标
+        val areaY = (rawY / screenHeight * 2000).toInt() - 1000 // 获取映射区域的Y坐标
+        val rect = Rect()
+        rect.left = (areaX - length).coerceAtLeast(-1000)
+        rect.top = (areaY - length).coerceAtLeast(-1000)
+        rect.right = (areaX + length).coerceAtMost(1000)
+        rect.bottom = (areaY + length).coerceAtMost(1000)
+        //rect 不能大于1000 且 不能小于-1000 否则报错
+        return rect
     }
 }
