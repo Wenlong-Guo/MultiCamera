@@ -1,9 +1,11 @@
 package io.github.guowenlong.multicamera.core
 
+import android.hardware.Camera
 import android.opengl.GLSurfaceView
 import android.view.SurfaceHolder
 import io.github.guowenlong.multicamera.bean.CameraLensFacing
-import io.github.guowenlong.multicamera.camera1.TakePictureListener
+import io.github.guowenlong.multicamera.camera1.TakeCameraPictureListener
+import io.github.guowenlong.multicamera.camera1.TakeGLPictureListener
 import io.github.guowenlong.multicamera.filter.BaseFilter
 import java.util.*
 
@@ -27,7 +29,16 @@ interface IRenderer : GLSurfaceView.Renderer {
 
     fun switchCamera(cameraLensFacing: CameraLensFacing? = null)
 
-    fun takePicture(listener: TakePictureListener)
+    fun takePicture(listener: TakeGLPictureListener)
+
+    /**
+     * 经过转换角度和裁剪的比例
+     */
+    fun takePicture(
+        shutterCallback: Camera.ShutterCallback? = null,
+        raw: Camera.PictureCallback? = null,
+        listener: TakeCameraPictureListener
+    )
 
     val runOnDraw: Queue<Runnable>
         get() = LinkedList()

@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10
  * Gmail:       guowenlong20000@sina.com
  */
 object GLSurfaceViewUtils {
+
     fun createBitmapFromGLSurface(x: Int, y: Int, w: Int, h: Int, gl: GL10?): Bitmap? {
         val bitmapBuffer = IntArray(w * h)
         val bitmapSource = IntArray(w * h)

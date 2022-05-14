@@ -1,16 +1,20 @@
 package io.github.guowenlong.camera.sample.fragment
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import android.view.View
 import android.view.animation.RotateAnimation
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.compose.animation.core.RepeatMode
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.camera.sample.base.BaseFragment
 import io.github.guowenlong.multicamera.camera1.Camera1Renderer
-import io.github.guowenlong.multicamera.camera1.TakePictureListener
+import io.github.guowenlong.multicamera.camera1.TakeCameraPictureListener
+import io.github.guowenlong.multicamera.camera1.TakeGLPictureListener
+import io.github.guowenlong.multicamera.core.ICamera
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
 
 /**
@@ -34,16 +38,32 @@ class TwoFragment : BaseFragment() {
     private var isShow = false
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
-        cameraView.setIRenderer(Camera1Renderer(cameraView))
+        cameraView.setMultiRenderer(Camera1Renderer(cameraView))
         picture = view.findViewById<ImageView>(R.id.iv_picture)
         view.findViewById<Button>(R.id.btn).setOnClickListener {
             cameraView.getRenderer().switchCamera()
         }
 
         view.findViewById<Button>(R.id.btn_picture).setOnClickListener {
-            cameraView.takePicture(object : TakePictureListener {
-                override fun onCollect(bitmap: Bitmap) {
+            /**
+             * openGL的一帧
+             */
+            cameraView.getRenderer().takePicture(
+                object : TakeGLPictureListener {
+                    override fun onCollect(bitmap: Bitmap) {
+                        picture.setImageBitmap(bitmap)
+                    }
+                }
+            )
+        }
+        view.findViewById<Button>(R.id.btn_picture2).setOnClickListener {
+            /**
+             * 原生相机的拍照
+             */
+            cameraView.getRenderer().takePicture(listener = object : TakeCameraPictureListener {
+                override fun onCollect(bitmap: Bitmap, bytes: ByteArray, camera: ICamera) {
                     picture.setImageBitmap(bitmap)
+                    camera.startPreview()
                 }
             })
         }

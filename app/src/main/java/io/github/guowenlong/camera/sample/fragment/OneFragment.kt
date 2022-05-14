@@ -32,12 +32,12 @@ class OneFragment : BaseFragment() {
 
     override fun init(view: View) {
         cameraView = view.findViewById(R.id.glcamera)
-        cameraView.setIRenderer(Camera1Renderer(cameraView))
+        cameraView.setMultiRenderer(Camera1Renderer(cameraView))
         view.findViewById<Button>(R.id.btn_one).setOnClickListener {
             if (isCool) {
-                cameraView.showMagicFilter(WarmMagicFilter(this.requireContext()))
+                cameraView.getRenderer().showMagicFilter(WarmMagicFilter(this.requireContext()))
             } else {
-                cameraView.showMagicFilter(CoolMagicFilter(this.requireContext()))
+                cameraView.getRenderer().showMagicFilter(CoolMagicFilter(this.requireContext()))
             }
             isCool = !isCool
         }

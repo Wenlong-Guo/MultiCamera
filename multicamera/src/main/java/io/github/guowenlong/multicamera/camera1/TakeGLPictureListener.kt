@@ -8,6 +8,6 @@ import android.graphics.Bitmap
  * Date:        2022/4/27 16:45
  * Gmail:       guowenlong20000@sina.com
  */
-interface TakePictureListener {
+interface TakeGLPictureListener {
     fun onCollect(bitmap: Bitmap)
 }

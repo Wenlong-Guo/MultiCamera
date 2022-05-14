@@ -53,6 +53,14 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
 
     override fun getMultiSize() = size
 
+    override fun takePicture(
+        shutterCallback: Camera.ShutterCallback?,
+        raw: Camera.PictureCallback?,
+        jpeg: Camera.PictureCallback
+    ) {
+        camera?.takePicture(shutterCallback, raw, jpeg)
+    }
+
     override fun openCamera(cameraLensFacing: CameraLensFacing, size: MultiSize?) {
         try {
             camera = Camera.open(cameraLensFacing.camera1)
@@ -89,8 +97,12 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
     override fun startPreview(surfaceTexture: SurfaceTexture?) {
         Log.e("guowenlong", "startPreview")
         try {
-            camera?.setPreviewTexture(surfaceTexture)
-            camera?.startPreview()
+            if (surfaceTexture == null) {
+                camera?.startPreview()
+            } else {
+                camera?.setPreviewTexture(surfaceTexture)
+                camera?.startPreview()
+            }
         } catch (e: IOException) {
             Log.e(TAG, "startPreview", e)
         }

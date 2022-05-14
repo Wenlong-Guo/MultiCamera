@@ -1,19 +1,13 @@
 package io.github.guowenlong.multicamera.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
-import io.github.guowenlong.multicamera.bean.CameraLensFacing
-import io.github.guowenlong.multicamera.camera1.Camera1Presenter
-import io.github.guowenlong.multicamera.camera1.Camera1Renderer
-import io.github.guowenlong.multicamera.camera1.TakePictureListener
-import io.github.guowenlong.multicamera.core.ICamera
 import io.github.guowenlong.multicamera.core.IRenderer
-import io.github.guowenlong.multicamera.filter.BaseFilter
-import io.github.guowenlong.multicamera.utils.SingleThreadUtils
 
 /**
  * Description: MultiCamera 的 GLSurfaceView
@@ -26,19 +20,14 @@ open class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
 
     private lateinit var renderer: IRenderer
 
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-
-    init {
-
-
-    }
+    private var scaleGestureDetector: ScaleGestureDetector? = null
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         super.surfaceDestroyed(holder)
         renderer.surfaceDestroyed(holder)
     }
 
-    fun setIRenderer(renderer: IRenderer, renderMode: Int = RENDERMODE_WHEN_DIRTY) {
+    fun setMultiRenderer(renderer: IRenderer, renderMode: Int = RENDERMODE_WHEN_DIRTY) {
         /*设置版本*/
         setEGLContextClientVersion(2)
         preserveEGLContextOnPause = true
@@ -47,29 +36,30 @@ open class MultiGLSurfaceView(context: Context, attrs: AttributeSet? = null) :
         this.setRenderer(renderer)
         /*主动调用渲染*/
         this.renderMode = renderMode
-        MultiOnScaleGestureListener(getCameraPresenter()).let {
-            scaleGestureDetector = ScaleGestureDetector(context, it)
-            it.detector = scaleGestureDetector
-        }
     }
 
     fun getRenderer(): IRenderer {
         return renderer
     }
 
-    fun getCameraPresenter(): ICamera {
-        return renderer.getCamera()
+    /**
+     * 设置手势
+     */
+    fun setScaleGestureDetector(scaleGestureDetector: ScaleGestureDetector? = null) {
+        if (scaleGestureDetector == null) {
+            MultiOnScaleGestureListener(renderer.getCamera()).let { listener ->
+                ScaleGestureDetector(context, listener).let {
+                    this.scaleGestureDetector = it
+                    listener.detector = it
+                }
+            }
+        } else {
+            this.scaleGestureDetector = scaleGestureDetector
+        }
     }
 
-    fun showMagicFilter(magicFilter: BaseFilter) {
-        renderer.showMagicFilter(magicFilter)
-    }
-
-    fun takePicture(listener: TakePictureListener) {
-        renderer.takePicture(listener)
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return scaleGestureDetector.onTouchEvent(event)
+        return scaleGestureDetector?.onTouchEvent(event) ?: super.onTouchEvent(event)
     }
 }

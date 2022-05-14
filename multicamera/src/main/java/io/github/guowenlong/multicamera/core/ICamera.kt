@@ -1,8 +1,10 @@
 package io.github.guowenlong.multicamera.core
 
 import android.graphics.SurfaceTexture
+import android.hardware.Camera
 import io.github.guowenlong.multicamera.bean.CameraLensFacing
 import io.github.guowenlong.multicamera.bean.MultiSize
+import io.github.guowenlong.multicamera.camera1.TakeCameraPictureListener
 
 /**
  * Description: 相机接口
@@ -20,7 +22,7 @@ interface ICamera {
     /**
      * 相机开始预览
      */
-    fun startPreview(surfaceTexture: SurfaceTexture?)
+    fun startPreview(surfaceTexture: SurfaceTexture? = null)
 
     /**
      * 相机停止预览
@@ -54,9 +56,15 @@ interface ICamera {
     fun getMultiSize(): MultiSize
 
     /**
-     * 拍照
+     * 原生拍照
+     * 注:需要自己转换角度和裁剪比例
      */
-//    fun takePicture()
+    fun takePicture(
+        shutterCallback: Camera.ShutterCallback? = null,
+        raw: Camera.PictureCallback? = null,
+        jpeg: Camera.PictureCallback
+    )
+
     /**
      * 开始录像
      */

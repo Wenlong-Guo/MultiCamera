@@ -1,8 +1,6 @@
 package io.github.guowenlong.camera.sample
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import io.github.guowenlong.multicamera.camera1.Camera1Renderer
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
@@ -20,7 +18,8 @@ class SingleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single)
-        glSurfaceView.setIRenderer(Camera1Renderer(glSurfaceView))
+        glSurfaceView.setMultiRenderer(Camera1Renderer(glSurfaceView))
+        glSurfaceView.setScaleGestureDetector()
     }
 
     override fun onResume() {
