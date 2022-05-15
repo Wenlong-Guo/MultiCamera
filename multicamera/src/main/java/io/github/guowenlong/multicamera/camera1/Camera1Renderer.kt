@@ -166,23 +166,21 @@ class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceVi
         raw: Camera.PictureCallback?,
         listener: TakeCameraPictureListener
     ) {
-        getCamera().takePicture(shutterCallback, raw, object : Camera.PictureCallback {
-            override fun onPictureTaken(bytes: ByteArray?, camera: Camera?) {
-                bytes?.let {
-                    var bitmap = BitmapUtils.bytesToBitmap(bytes)
-                    bitmap = if (cameraLensFacing == CameraLensFacing.FRONT) {
-                        CameraUtils.flip(
-                            CameraUtils.rotateBitmap(bitmap, -90F),
-                            isX = true,
-                            isY = false
-                        )
-                    } else {
-                        CameraUtils.rotateBitmap(bitmap, 90F)
-                    }
-                    listener.onCollect(bitmap, bytes, getCamera())
+        getCamera().takePicture(shutterCallback, raw) { bytes, _ ->
+            bytes?.let {
+                var bitmap = BitmapUtils.bytesToBitmap(bytes)
+                bitmap = if (cameraLensFacing == CameraLensFacing.FRONT) {
+                    CameraUtils.flip(
+                        CameraUtils.rotateBitmap(bitmap, -90F),
+                        isX = true,
+                        isY = false
+                    )
+                } else {
+                    CameraUtils.rotateBitmap(bitmap, 90F)
                 }
+                listener.onCollect(bitmap, bytes, getCamera())
             }
-        })
+        }
     }
 
     /**

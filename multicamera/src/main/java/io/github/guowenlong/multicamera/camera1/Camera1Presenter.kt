@@ -115,7 +115,7 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
         camera?.stopPreview()
     }
 
-    override fun focusOnRect(rect: Rect) {
+    override fun focusOnRect(rect: Rect, callback: Camera.AutoFocusCallback) {
         val parameters: Camera.Parameters? = camera?.parameters // 先获取当前相机的参数配置对象
         parameters?.focusMode = Camera.Parameters.FOCUS_MODE_AUTO // 设置聚焦模式
         Log.d(TAG, "parameters.getMaxNumFocusAreas() : " + parameters?.maxNumMeteringAreas)
@@ -132,7 +132,7 @@ class Camera1Presenter(private val surfaceView: SurfaceView) : ICamera {
         try {
             camera?.cancelAutoFocus() // 先要取消掉进程中所有的聚焦功能
             camera?.parameters = parameters // 一定要记得把相应参数设置给相机
-            camera?.autoFocus { p0, camera -> Log.e(TAG, "auto : $p0") }
+            camera?.autoFocus(callback)
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }

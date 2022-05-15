@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FocusLayout">
+        <attr name="focus_focusing_id" format="integer" />
+        <attr name="focus_success_id" format="integer" />
+        <attr name="focus_fail_id" format="integer" />
+        <attr name="focus_width" format="dimension" />
+        <attr name="focus_height" format="dimension" />
+    </declare-styleable>
+</resources>

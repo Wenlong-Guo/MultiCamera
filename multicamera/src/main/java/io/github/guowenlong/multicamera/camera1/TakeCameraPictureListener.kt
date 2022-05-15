@@ -10,5 +10,5 @@ import io.github.guowenlong.multicamera.core.ICamera
  * Gmail:       guowenlong20000@sina.com
  */
 interface TakeCameraPictureListener {
-    fun onCollect(bitmap: Bitmap, bytes: ByteArray, camera: ICamera)
+    fun onCollect(previewBitmap: Bitmap, bytes: ByteArray, camera: ICamera)
 }

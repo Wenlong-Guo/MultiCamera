@@ -61,13 +61,8 @@ data class MultiSize(
      * 覆盖GLSurfaceView的宽高
      */
     fun coverViewSize(width: Int, height: Int) {
-        if (height > width) {
-            this.viewWidth = width
-            this.viewHeight = height
-        } else {
-            this.viewWidth = height
-            this.viewHeight = width
-        }
+        this.viewWidth = width
+        this.viewHeight = height
     }
 
     override fun toString(): String {

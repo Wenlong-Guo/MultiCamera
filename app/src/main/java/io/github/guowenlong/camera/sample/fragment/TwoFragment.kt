@@ -1,13 +1,11 @@
 package io.github.guowenlong.camera.sample.fragment
 
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.util.Log
 import android.view.View
 import android.view.animation.RotateAnimation
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.compose.animation.core.RepeatMode
 import io.github.guowenlong.camera.sample.R
 import io.github.guowenlong.camera.sample.base.BaseFragment
@@ -61,8 +59,8 @@ class TwoFragment : BaseFragment() {
              * 原生相机的拍照
              */
             cameraView.getRenderer().takePicture(listener = object : TakeCameraPictureListener {
-                override fun onCollect(bitmap: Bitmap, bytes: ByteArray, camera: ICamera) {
-                    picture.setImageBitmap(bitmap)
+                override fun onCollect(previewBitmap: Bitmap, bytes: ByteArray, camera: ICamera) {
+                    picture.setImageBitmap(previewBitmap)
                     camera.startPreview()
                 }
             })

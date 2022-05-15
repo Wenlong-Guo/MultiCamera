@@ -66,7 +66,7 @@ interface ICamera {
         jpeg: Camera.PictureCallback
     )
 
-    fun focusOnRect(rect: Rect)
+    fun focusOnRect(rect: Rect, callback: Camera.AutoFocusCallback)
 
     /**
      * 开始录像
