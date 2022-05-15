@@ -15,6 +15,7 @@ import io.github.guowenlong.multicamera.filter.BaseFilter
 import io.github.guowenlong.multicamera.filter.OriginFilter
 import io.github.guowenlong.multicamera.utils.*
 import io.github.guowenlong.multicamera.widget.MultiGLSurfaceView
+import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -202,6 +203,22 @@ class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceVi
             this.filter?.release()
             this.filter = filter
             this.filter?.init()
+        }
+    }
+
+    private val runOnDraw: Queue<Runnable> = LinkedList()
+
+    private fun runOnDraw(runnable: Runnable?) {
+        synchronized(runOnDraw) {
+            runOnDraw.add(runnable)
+        }
+    }
+
+    private fun runAll(queue: Queue<Runnable>) {
+        synchronized(queue) {
+            while (!queue.isEmpty()) {
+                queue.poll()?.run()
+            }
         }
     }
 }

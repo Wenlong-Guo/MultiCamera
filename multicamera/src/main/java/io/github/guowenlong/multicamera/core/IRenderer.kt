@@ -7,7 +7,6 @@ import io.github.guowenlong.multicamera.bean.CameraLensFacing
 import io.github.guowenlong.multicamera.camera1.TakeCameraPictureListener
 import io.github.guowenlong.multicamera.camera1.TakeGLPictureListener
 import io.github.guowenlong.multicamera.filter.BaseFilter
-import java.util.*
 
 /**
  * Description: 渲染器的接口
@@ -39,19 +38,4 @@ interface IRenderer : GLSurfaceView.Renderer {
         raw: Camera.PictureCallback? = null,
         listener: TakeCameraPictureListener
     )
-
-    val runOnDraw: Queue<Runnable>
-        get() = LinkedList()
-
-    fun runOnDraw(runnable: Runnable?) {
-        synchronized(runOnDraw) { runOnDraw.add(runnable) }
-    }
-
-    fun runAll(queue: Queue<Runnable>) {
-        synchronized(queue) {
-            while (!queue.isEmpty()) {
-                queue.poll()?.run()
-            }
-        }
-    }
 }
