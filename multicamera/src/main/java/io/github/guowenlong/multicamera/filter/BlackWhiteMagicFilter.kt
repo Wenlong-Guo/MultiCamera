@@ -8,7 +8,7 @@ import android.content.Context
  * Date:        2022/5/16 22:00
  * Gmail:       guowenlong20000@sina.com
  */
-class BlackWhiteFilter(private val context: Context) : BaseFilter() {
+class BlackWhiteMagicFilter(private val context: Context) : BaseFilter() {
 
     override fun init() {
         clear()
