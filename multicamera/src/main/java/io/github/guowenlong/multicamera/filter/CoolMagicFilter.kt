@@ -22,6 +22,7 @@ class CoolMagicFilter(private val context: Context) : BaseFilter() {
         glTexture = glGetUniformLocation("vTexture")
         glMatrix = glGetUniformLocation("vMatrix")
         initBuffer()
+
         mToneCurveTextureUniformLocation = GLES20.glGetUniformLocation(glProgram, "curve")
         GLES20.glGenTextures(1, mToneCurveTexture, 0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mToneCurveTexture[0])

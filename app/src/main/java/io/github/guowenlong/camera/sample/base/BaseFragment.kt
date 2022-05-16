@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 /**
- * Description:
+ * Description: fragment的基类
  * Author:      郭文龙
  * Date:        2022/4/27 18:16
  * Gmail:       guowenlong20000@sina.com
@@ -27,4 +27,4 @@ abstract class BaseFragment : Fragment() {
         init(view)
         return view
     }
-}
+ }
