@@ -13,5 +13,6 @@ void main()
     gl_Position = vPosition * vMatrix;
     aCoord = vCoord;
     textureCoordinate = inputTextureCoordinate.xy;
+
 }
 

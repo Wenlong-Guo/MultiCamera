@@ -27,7 +27,7 @@ class OneFragment : BaseFragment() {
     private var isShow = true
     private var isCool = true
 
-    private val list = mutableListOf("无滤镜", "温暖", "寒冷", "黑猫", "白猫")
+    private val list = mutableListOf("无滤镜", "温暖", "寒冷", "黑猫", "白猫","黑白")
 
     private val adapter by lazy {
         object : FilterAdapter(list) {
@@ -37,6 +37,7 @@ class OneFragment : BaseFragment() {
                     "寒冷" -> CoolMagicFilter(requireContext())
                     "黑猫" -> BlackCatMagicFilter(requireContext())
                     "白猫" -> WhiteCatMagicFilter(requireContext())
+                    "黑白" -> BlackWhiteFilter(requireContext())
                     else -> OriginFilter(requireContext())
                 }
                 cameraView.getRenderer().showMagicFilter(filter)
