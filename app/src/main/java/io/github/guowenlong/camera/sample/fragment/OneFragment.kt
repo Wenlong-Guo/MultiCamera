@@ -61,6 +61,8 @@ class OneFragment : BaseFragment() {
                     "日落" -> SunsetMagicFilter(requireContext())
                     "浪漫" -> RomanceMagicFilter(requireContext())
                     "樱花" -> SakuraMagicFilter(requireContext())
+                    "健康" -> HealthyMagicFilter(requireContext())
+                    "拿铁" -> LatteMagicFilter(requireContext())
                     else -> OriginFilter(requireContext())
                 }
                 cameraView.getRenderer().showMagicFilter(filter)
