@@ -41,11 +41,7 @@ class OneFragment : BaseFragment() {
         "浪漫",
         "拿铁",
         "安静",
-        "纽约",
-        "甜品",
-        "Amaro",
         "复古",
-        "Brannan"
     )
 
     private val adapter by lazy {
@@ -63,6 +59,8 @@ class OneFragment : BaseFragment() {
                     "樱花" -> SakuraMagicFilter(requireContext())
                     "健康" -> HealthyMagicFilter(requireContext())
                     "拿铁" -> LatteMagicFilter(requireContext())
+                    "安静" -> QuietMagicFilter(requireContext())
+                    "复古" -> AntiqueMagicFilter(requireContext())
                     else -> OriginFilter(requireContext())
                 }
                 cameraView.getRenderer().showMagicFilter(filter)

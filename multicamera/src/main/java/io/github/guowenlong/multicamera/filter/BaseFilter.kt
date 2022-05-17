@@ -3,13 +3,13 @@ package io.github.guowenlong.multicamera.filter
 import android.content.Context
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
-import android.util.Log
 import io.github.guowenlong.multicamera.bean.CameraLensFacing
 import io.github.guowenlong.multicamera.utils.AssetsUtils
 import io.github.guowenlong.multicamera.utils.OpenGLUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.util.*
 
 /**
  * Description: 基础过滤器
@@ -31,6 +31,7 @@ abstract class BaseFilter {
     var vertexBuffer: FloatBuffer? = null
     var backTextureBuffer: FloatBuffer? = null
     var frontTextureBuffer: FloatBuffer? = null
+    private val mRunOnDraw: LinkedList<Runnable> by lazy { LinkedList() }
 
     abstract fun init()
 
@@ -52,6 +53,8 @@ abstract class BaseFilter {
             GLES20.glVertexAttribPointer(glCoord, 2, GLES20.GL_FLOAT, false, 0, frontTextureBuffer)
             GLES20.glEnableVertexAttribArray(glCoord)
         }
+        GLES20.glUseProgram(glProgram)
+        runPendingOnDrawTasks()
 
         bindTexture(textureId)
 
@@ -126,5 +129,22 @@ abstract class BaseFilter {
             ByteBuffer.allocateDirect(32).order(ByteOrder.nativeOrder()).asFloatBuffer()
         frontTextureBuffer?.clear()
         frontTextureBuffer?.put(OpenGLUtils.TEXTURE_FRONT)
+    }
+
+    protected open fun setFloat(location: Int, floatValue: Float) {
+        runOnDraw { GLES20.glUniform1f(location, floatValue) }
+    }
+
+    protected open fun setInteger(location: Int, intValue: Int) {
+        runOnDraw { GLES20.glUniform1i(location, intValue) }
+    }
+    protected open fun runPendingOnDrawTasks() {
+        while (!mRunOnDraw.isEmpty()) {
+            mRunOnDraw.removeFirst().run()
+        }
+    }
+
+    protected open fun runOnDraw(runnable: Runnable) {
+        synchronized(mRunOnDraw) { mRunOnDraw.addLast(runnable) }
     }
 }
