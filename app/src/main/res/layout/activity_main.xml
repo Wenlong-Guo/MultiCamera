@@ -35,8 +35,9 @@
             android:layout_height="wrap_content"
             android:background="#333333"
             android:gravity="center"
+            android:padding="12dp"
+            android:text="拍照\n (Activity+GLSurfaceView)"
             android:textAllCaps="false"
-            android:text="Activity+GLSurfaceView"
             android:textColor="@color/white" />
 
     </androidx.cardview.widget.CardView>
@@ -45,8 +46,8 @@
         android:id="@+id/cv_multi_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="50dp"
         android:background="#666666"
         app:cardCornerRadius="24dp"
@@ -58,8 +59,9 @@
             android:layout_height="wrap_content"
             android:background="#333333"
             android:gravity="center"
+            android:padding="12dp"
+            android:text="生命周期测试\n (多个fragment+GLSurfaceView)"
             android:textAllCaps="false"
-            android:text="多个fragment+GLSurfaceView"
             android:textColor="@color/white" />
 
     </androidx.cardview.widget.CardView>

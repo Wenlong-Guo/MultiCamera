@@ -46,7 +46,7 @@ class TwoFragment : BaseFragment() {
             /**
              * openGL的一帧
              */
-            cameraView.getRenderer().takePicture(
+            cameraView.getRenderer().takeOriginPicture(
                 object : TakeGLPictureListener {
                     override fun onCollect(bitmap: Bitmap) {
                         picture.setImageBitmap(bitmap)
@@ -58,7 +58,7 @@ class TwoFragment : BaseFragment() {
             /**
              * 原生相机的拍照
              */
-            cameraView.getRenderer().takePicture(listener = object : TakeCameraPictureListener {
+            cameraView.getRenderer().takeOriginPicture(listener = object : TakeCameraPictureListener {
                 override fun onCollect(previewBitmap: Bitmap, bytes: ByteArray, camera: ICamera) {
                     picture.setImageBitmap(previewBitmap)
                     camera.startPreview()

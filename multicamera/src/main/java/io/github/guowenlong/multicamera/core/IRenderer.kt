@@ -28,12 +28,12 @@ interface IRenderer : GLSurfaceView.Renderer {
 
     fun switchCamera(cameraLensFacing: CameraLensFacing? = null)
 
-    fun takePicture(listener: TakeGLPictureListener)
+    fun takeOriginPicture(listener: TakeGLPictureListener)
 
     /**
      * 经过转换角度和裁剪的比例
      */
-    fun takePicture(
+    fun takeOriginPicture(
         shutterCallback: Camera.ShutterCallback? = null,
         raw: Camera.PictureCallback? = null,
         listener: TakeCameraPictureListener

@@ -4,8 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import java.io.*
 import java.nio.charset.Charset
 
 
@@ -36,6 +35,30 @@ object AssetsUtils {
             Log.e(TAG, "readAssets2String", e)
         }
         return content
+    }
+
+    fun assetsToString(context: Context, rawId: Int): String {
+        val `is`: InputStream = context.resources.openRawResource(rawId)
+        val br = BufferedReader(InputStreamReader(`is`))
+        var line: String?
+        val sb = StringBuilder()
+
+        try {
+            while (br.readLine().also { line = it } != null) {
+                sb.append(line)
+                sb.append("\n")
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            br.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return sb.toString()
     }
 
     fun getImageFromAssetsFile(context: Context, fileName: String): Bitmap? {

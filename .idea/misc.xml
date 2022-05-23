@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/Android_Project/MultiCamera/app/src/main/res/drawable/bg_icon_gray.xml" value="0.406" />
         <entry key="..\:/Android/Android_Project/MultiCamera/app/src/main/res/layout/activity_main.xml" value="0.2857142857142857" />
         <entry key="..\:/Android/Android_Project/MultiCamera/app/src/main/res/layout/activity_single.xml" value="0.2703125" />
         <entry key="..\:/Android/Android_Project/MultiCamera/app/src/main/res/layout/fragment_one.xml" value="0.24114583333333334" />

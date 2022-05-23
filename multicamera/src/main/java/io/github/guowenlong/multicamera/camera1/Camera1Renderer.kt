@@ -158,11 +158,11 @@ class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceVi
     /**
      * 无声拍照
      */
-    override fun takePicture(listener: TakeGLPictureListener) {
+    override fun takeOriginPicture(listener: TakeGLPictureListener) {
         takePictureListener = listener
     }
 
-    override fun takePicture(
+    override fun takeOriginPicture(
         shutterCallback: Camera.ShutterCallback?,
         raw: Camera.PictureCallback?,
         listener: TakeCameraPictureListener
@@ -203,6 +203,7 @@ class Camera1Renderer(private val surfaceView: MultiGLSurfaceView) : GLSurfaceVi
             this.filter?.release()
             this.filter = filter
             this.filter?.init()
+            this.filter?.turnCameraId(cameraLensFacing)
         }
     }
 
